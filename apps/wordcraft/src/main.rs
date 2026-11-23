@@ -234,7 +234,7 @@ fn app_icon() -> Option<egui::IconData> {
 }
 
 const USAGE: &str = "\
-wordcraft — the WordCraft desktop app
+wordflow — the Wordflow desktop app
 
 USAGE:
   wordcraft [--sample] [--control PORT] [--control-token TOKEN | --control-token-file PATH] [FILE…]
@@ -344,7 +344,7 @@ fn main() -> eframe::Result {
     // First, so the panic hook (set once, by this call; the later one only gives it the crash-log
     // folder) and every start-up warning are recorded.
     let logger = logs::install(LogNames::new("wordcraft"));
-    crash::install("WordCraft", env!("CARGO_PKG_VERSION"), None);
+    crash::install("Wordflow", env!("CARGO_PKG_VERSION"), None);
     #[cfg(target_os = "linux")]
     if let Some(e) = start_over_failed {
         log::error!("couldn't start again without another program's AppImage variables, so the self-update is off in this window: {e}");
@@ -388,7 +388,7 @@ fn main() -> eframe::Result {
             },
             "--sample" => sample = true,
             "--version" => {
-                println!("wordcraft {} ({})", env!("CARGO_PKG_VERSION"), build_sha());
+                println!("wordflow {} ({})", env!("CARGO_PKG_VERSION"), build_sha());
                 return Ok(());
             }
             // Before the window opens (#968). Unlike `print!`, a closed stdout can't panic.
@@ -432,7 +432,7 @@ fn main() -> eframe::Result {
             Some(dir) => match logger.attach_dir(&dir) {
                 Ok(path) => {
                     crash::install("WordCraft", env!("CARGO_PKG_VERSION"), Some(dir));
-                    log::info!("WordCraft {} ({}), log file {}", env!("CARGO_PKG_VERSION"), build_sha(), path.display());
+                    log::info!("Wordflow {} ({}), log file {}", env!("CARGO_PKG_VERSION"), build_sha(), path.display());
                 }
                 // Standard error only by now (`attach_dir` gave up on the file).
                 Err(e) => log::warn!("no log file: {e}"),
@@ -442,8 +442,8 @@ fn main() -> eframe::Result {
     }
     let mut options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
-            .with_title("WordCraft")
-            .with_app_id("ai.storyteller.wordcraft")
+            .with_title("Wordflow")
+            .with_app_id("com.wordflow.app")
             .with_inner_size([1440.0, 920.0])
             .with_min_inner_size(wordcraft_ui_egui::window_geometry::MIN_SIZE)
             .with_drag_and_drop(true)
@@ -506,7 +506,7 @@ fn main() -> eframe::Result {
     drop(sender);
     let exit_settings = settings.clone();
     let result = eframe::run_native(
-        "WordCraft",
+        "Wordflow",
         options,
         Box::new(move |cc| {
             let ctx = cc.egui_ctx.clone();
@@ -528,7 +528,7 @@ fn main() -> eframe::Result {
             );
             let shell = ShellInfo::current().backend(if x11 { Backend::X11 } else { Backend::from_env() });
             let spec = InstallSpec::new(shell, Arc::new(SystemWindows))
-                .app_id("ai.storyteller.wordcraft")
+                .app_id("com.wordflow.app")
                 .system(SystemReader::start(wake))
                 .clipboard(Clipboard::new(SystemClipboard::new().decoder(decode_png)))
                 .placement(placement);
@@ -793,7 +793,7 @@ mod smoke {
                     .build(),
             );
             let spec = InstallSpec::new(ShellInfo::current(), Arc::new(SystemWindows))
-                .app_id("ai.storyteller.wordcraft")
+                .app_id("com.wordflow.app")
                 .placement(Arc::new(Mutex::new(Store::in_memory())));
             embed::install(&ctx, spec, &wordcraft_ui_egui::ui_fonts(lang)).map_err(|e| e.to_string()).unwrap();
             let mut frames = Frames::over(ctx.clone());
