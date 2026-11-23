@@ -8,3 +8,11 @@ plan/
 /.claude/
 /target-*/
 /craft-fonts/
+/*.dmg
+/*.msi
+*.exe
+*.zip
+.vscode/
+.idea/
+*.swp
+*.swo
