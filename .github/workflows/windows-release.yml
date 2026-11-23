@@ -45,7 +45,8 @@ jobs:
         shell: bash
         run: |
           mkdir sums && cd sums
-          gh release download "$TAG" --pattern '*' --exclude 'SHA256SUMS.txt'
+          gh release download "$TAG" --pattern '*'
+          rm -f SHA256SUMS.txt
           sha256sum -- * > ../SHA256SUMS.txt
           cd .. && cat SHA256SUMS.txt
           gh release upload "$TAG" SHA256SUMS.txt --clobber
