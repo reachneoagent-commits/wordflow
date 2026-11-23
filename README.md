@@ -1,3 +1,10 @@
+<p align="left">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/header-dark.png">
+    <img src="assets/header-light.png" width="600" height="160" alt="Wordflow logo and name">
+  </picture>
+</p>
+
 <p align="center"><b>Writing and document design; a modern word processor built in pure Rust.</b></p>
 
 Wordflow is part of the FlowApps suite. It is a fast, open-source word processor with a familiar
