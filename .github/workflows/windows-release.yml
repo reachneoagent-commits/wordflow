@@ -1,0 +1,51 @@
+name: Windows release
+
+# Builds the Windows x64 portable zip for an existing release tag and attaches it (plus a refreshed
+# SHA256SUMS.txt). Run from the Actions tab: Windows release > Run workflow > tag (e.g. v0.1.0-rc.1).
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to attach the Windows build to
+        required: true
+        default: v0.1.0-rc.1
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG: ${{ inputs.tag }}
+      RUSTFLAGS: -C target-feature=+crt-static
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Build wordflow (release, Windows x64)
+        run: cargo build --release -p wordcraft
+
+      - name: Package portable zip
+        shell: pwsh
+        run: |
+          $version = $env:TAG.TrimStart('v')
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Compress-Archive -Path target/release/wordcraft.exe -DestinationPath "dist/wordflow-$version-windows-x64-portable.zip" -Force
+
+      - name: Attach to the release
+        shell: bash
+        run: gh release upload "$TAG" dist/*-windows-x64-portable.zip --clobber
+
+      - name: Refresh SHA256SUMS.txt
+        shell: bash
+        run: |
+          mkdir sums && cd sums
+          gh release download "$TAG" --pattern '*' --exclude 'SHA256SUMS.txt'
+          sha256sum -- * > ../SHA256SUMS.txt
+          cd .. && cat SHA256SUMS.txt
+          gh release upload "$TAG" SHA256SUMS.txt --clobber

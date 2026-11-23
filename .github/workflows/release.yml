@@ -24,7 +24,7 @@ jobs:
         run: cargo build --release -p wordcraft
 
       - name: Extract version from tag
-        run: echo "VERSION=${{ github.ref_name#v }}" >> $GITHUB_ENV
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
 
       - name: Create macOS app bundle
         run: |
@@ -37,6 +37,7 @@ jobs:
 
       - name: Create macOS DMG
         run: |
+          mkdir -p dist
           hdiutil create -srcfolder Wordflow.app -ov -format UDZO "dist/wordflow-${VERSION}-macos-arm64.dmg"
           hdiutil internet-enable -yes "dist/wordflow-${VERSION}-macos-arm64.dmg"
 
@@ -64,10 +65,11 @@ jobs:
         run: cargo build --release -p wordcraft
 
       - name: Extract version from tag
-        run: echo "VERSION=${{ github.ref_name#v }}" >> $env:GITHUB_ENV
+        run: echo "VERSION=$($env:GITHUB_REF_NAME.TrimStart('v'))" >> $env:GITHUB_ENV
 
       - name: Create Windows portable zip
         run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
           Compress-Archive -Path target/release/wordcraft.exe -DestinationPath "dist/wordflow-${{ env.VERSION }}-windows-x64-portable.zip"
 
       - name: Upload Windows asset
