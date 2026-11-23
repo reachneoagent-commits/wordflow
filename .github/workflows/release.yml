@@ -21,7 +21,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Build wordflow (release, macOS)
-        run: cargo build --release -p wordflow
+        run: cargo build --release -p wordcraft
 
       - name: Create macOS artifact
         run: |
@@ -49,7 +49,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Build wordflow (release, Windows)
-        run: cargo build --release -p wordflow
+        run: cargo build --release -p wordcraft
 
       - name: Create Windows artifact
         run: |
