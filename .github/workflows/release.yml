@@ -23,15 +23,27 @@ jobs:
       - name: Build wordflow (release, macOS)
         run: cargo build --release -p wordcraft
 
-      - name: Create macOS artifact
+      - name: Extract version from tag
+        run: echo "VERSION=${{ github.ref_name#v }}" >> $GITHUB_ENV
+
+      - name: Create macOS app bundle
         run: |
-          mkdir -p dist
-          cp target/release/wordcraft "dist/Wordflow-${{ github.ref_name }}-macos-arm64"
+          APP_BUNDLE="Wordflow.app"
+          rm -rf "$APP_BUNDLE"
+          mkdir -p "$APP_BUNDLE/Contents/MacOS"
+          mkdir -p "$APP_BUNDLE/Contents/Resources"
+          cp target/release/wordcraft "$APP_BUNDLE/Contents/MacOS/wordcraft"
+          printf '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n<plist version="1.0">\n<dict>\n\t<key>CFBundleDisplayName</key>\n\t<string>Wordflow</string>\n\t<key>CFBundleIdentifier</key>\n\t<string>com.wordflow.app</string>\n\t<key>CFBundleExecutable</key>\n\t<string>wordcraft</string>\n\t<key>CFBundleIconFile</key>\n\t<string>Wordflow.icns</string>\n\t<key>CFBundleName</key>\n\t<string>Wordflow</string>\n\t<key>CFBundlePackageType</key>\n\t<string>APPL</string>\n\t<key>CFBundleShortVersionString</key>\n\t<string>%s</string>\n\t<key>CFBundleVersion</key>\n\t<string>%s</string>\n\t<key>NSHumanReadableCopyright</key>\n\t<string>© Reach Neo</string>\n</dict>\n</plist>\n' "$VERSION" "$VERSION" > "$APP_BUNDLE/Contents/Info.plist"
+
+      - name: Create macOS DMG
+        run: |
+          hdiutil create -srcfolder Wordflow.app -ov -format UDZO "dist/wordflow-${VERSION}-macos-arm64.dmg"
+          hdiutil internet-enable -yes "dist/wordflow-${VERSION}-macos-arm64.dmg"
 
       - name: Upload macOS asset
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/Wordflow-${{ github.ref_name }}-macos-arm64
+          files: dist/wordflow-${{ env.VERSION }}-macos-arm64.dmg
           generate_release_notes: true
           fail_on_unmatched_files: false
         env:
@@ -51,15 +63,17 @@ jobs:
       - name: Build wordflow (release, Windows)
         run: cargo build --release -p wordcraft
 
-      - name: Create Windows artifact
+      - name: Extract version from tag
+        run: echo "VERSION=${{ github.ref_name#v }}" >> $env:GITHUB_ENV
+
+      - name: Create Windows portable zip
         run: |
-          New-Item -ItemType Directory -Force -Path dist
-          Copy-Item target/release/wordcraft.exe dist/Wordflow-${{ github.ref_name }}-windows-x64.exe
+          Compress-Archive -Path target/release/wordcraft.exe -DestinationPath "dist/wordflow-${{ env.VERSION }}-windows-x64-portable.zip"
 
       - name: Upload Windows asset
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/Wordflow-${{ github.ref_name }}-windows-x64.exe
+          files: dist/wordflow-${{ env.VERSION }}-windows-x64-portable.zip
           generate_release_notes: true
           fail_on_unmatched_files: false
         env:
