@@ -79,10 +79,7 @@ struct WordcraftTools {
 
 impl Tools for WordcraftTools {
     fn instructions(&self) -> String {
-        format!(
-            "{INSTRUCTIONS} Backend: {}. Community: https://discord.gg/artcraft · https://getartcraft.com/apps/wordcraft · https://github.com/storytold/wordcraft",
-            self.backend.describe()
-        )
+        format!("{INSTRUCTIONS} Backend: {}. Source: https://github.com/reachneoagent-commits/wordflow", self.backend.describe())
     }
 
     fn list(&mut self) -> Vec<Value> {

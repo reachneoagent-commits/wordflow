@@ -66,7 +66,7 @@ pub fn credits() -> Credits {
 }
 
 /// The About tab's contents: name, blurb, version and build, and the project links in the old About's order (site,
-/// Discord, source), one to a line.
+/// source), one to a line.
 pub fn about_info() -> AboutInfo {
     let build = option_env!("WORDCRAFT_BUILD_SHA").map(|s| s.get(..8).unwrap_or(s)).unwrap_or(tl!("development build"));
     // The dialog's own "Version {version}" words the line, so this is the number and the build only.
@@ -76,11 +76,10 @@ pub fn about_info() -> AboutInfo {
         tl!("A free, open-source word processor written from scratch in Rust.\nPart of the Crafting Apps from the ArtCraft team.").to_string(),
         version.to_string(),
     )
-    .links([
-        AboutLink::new(tl!("getartcraft.com/apps/wordcraft").to_string(), "https://getartcraft.com/apps/wordcraft"),
-        AboutLink::new(tl!("Join us on Discord: discord.gg/artcraft").to_string(), "https://discord.gg/artcraft"),
-        AboutLink::new(tl!("Source code: github.com/storytold/wordcraft").to_string(), "https://github.com/storytold/wordcraft"),
-    ])
+    .links([AboutLink::new(
+        tl!("Source code: github.com/reachneoagent-commits/wordflow").to_string(),
+        "https://github.com/reachneoagent-commits/wordflow",
+    )])
     .built_with(tl!("MIT OR Apache-2.0. Copyright (c) 2026 ArtCraft Team and the WordCraft contributors.").to_string())
 }
 

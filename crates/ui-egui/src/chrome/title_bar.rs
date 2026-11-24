@@ -1,4 +1,4 @@
-//! The title bar: AutoSave, the Quick Access Toolbar, the document title, search, community and account.
+//! The title bar: AutoSave, the Quick Access Toolbar, the document title, search and account.
 
 use std::cell::RefCell;
 
@@ -6,10 +6,7 @@ use craft::behavior::IconId;
 use craft::keymap::CommandRef;
 use craft::menu::RibbonMenuRequest;
 use craft::review::ui::Avatar;
-use craft::theme::variant::Tone;
-use craft::theme::{ControlSize, CustomVariant, Emphasis, RadiusStep, Tokens, Variant, VariantLook};
-use craft::ui::buttons::button::ButtonStyleKey;
-use craft::ui::buttons::icon_button::IconButtonStyleKey;
+use craft::theme::ControlSize;
 use craft::ui::buttons::{Button, IconButton};
 use craft::ui::choice::Switch;
 use craft::ui::contract::{Bind, BodyCx, Props as _, Show as _, ShowCollection as _, ShowContainer as _, TooltipSpec, Trigger};
@@ -21,7 +18,7 @@ use craft::ui::primitives::IconSpec;
 use craft::ui::runtime::env::Env;
 use craft::ui::runtime::inspect;
 use craft::ui::runtime::windows::{WindowAction, WindowHost};
-use craft::ui::shell::{Title, TitleBar};
+use craft::ui::shell::{Frame, Title, TitleBar};
 use craft::ui::style::GlyphRole;
 use egui::Ui;
 use serde_json::json;
@@ -93,8 +90,19 @@ pub(crate) fn show(ui: &mut Ui, _cx: &mut BodyCx<'_>, app: &mut WordApp) {
 /// either side of the title's place.
 const TITLE_FIT_GAP: f32 = 16.0;
 
+/// The width the three macOS window lights take at the bar's start, with a gap after them.
+const LIGHTS_CLEARANCE: f32 = 78.0;
+
 /// AutoSave and the Quick Access Toolbar, at the start of the bar; returns the rect they took.
 fn leading(app: &mut WordApp, ui: &mut Ui) -> Option<egui::Rect> {
+    // The macOS window lights float over the bar's start edge. When the frame doesn't already reserve room for
+    // them, keep the first control clear of them (it read "utSave" under the lights).
+    if cfg!(target_os = "macos")
+        && !matches!(WindowHost::of(ui.ctx()).frame(), Frame::Inset(_))
+        && !ui.ctx().input(|i| i.viewport().fullscreen.unwrap_or(false))
+    {
+        ui.add_space(LIGHTS_CLEARANCE);
+    }
     let switch = autosave(app, ui);
     // Hidden (#1945): neither the buttons nor the … menu; the title centres as before.
     let toolbar = if app.ui.quick_access_toolbar { quick_access(app, ui) } else { None };
@@ -235,45 +243,10 @@ fn qat_menu(app: &mut WordApp, ui: &mut Ui) -> egui::Rect {
     out.response.rect
 }
 
-/// Solid accent pill look for the full title bar Discord button (#656, #7311).
-fn discord_pill_look(tokens: &Tokens) -> VariantLook {
-    VariantLook::of(Emphasis::Solid, Tone::Accent, tokens).radius(RadiusStep::Pill)
-}
-
-/// Solid accent look for the compact icon-only Discord button when the title bar narrows (#5886, #7311).
-fn discord_icon_look(tokens: &Tokens) -> VariantLook {
-    VariantLook::of(Emphasis::Solid, Tone::Accent, tokens)
-}
-
-const DISCORD_PILL: CustomVariant = CustomVariant::new::<ButtonStyleKey>("wordcraft.discord-pill", discord_pill_look);
-const DISCORD_ICON: CustomVariant = CustomVariant::new::<IconButtonStyleKey>("wordcraft.discord-icon", discord_icon_look);
-
-/// Search, the community button and the account, at the end of the bar; returns the rect they took. In a narrow
-/// window they give way by `step` (#5886, as the old bar's fit): at 1 the Discord button drops its label, at 2 the
-/// search shows its magnifier alone as well.
+/// Search and the account, at the end of the bar; returns the rect they took. In a narrow window the search gives
+/// way by `step` (#5886, as the old bar's fit): from 1 it shows its magnifier alone.
 fn trailing(app: &mut WordApp, ui: &mut Ui, step: usize) -> Option<egui::Rect> {
-    let mut rects = vec![super::search::show(app, ui, step >= 2)];
-    if app.ui.show_discord {
-        let tip = TooltipSpec::new(tl!("Join the ArtCraft community on Discord").to_string());
-        let clicked = if step >= 1 {
-            let out = IconButton::new(IconId::new("discordPill"))
-                .label(tl!("Discord").to_string())
-                .variant(Variant::Custom(DISCORD_ICON))
-                .glyphs(GlyphRole::Tool)
-                .tooltip(tip)
-                .show(ui);
-            rects.push(out.response.rect);
-            out.response.clicked()
-        } else {
-            let out =
-                Button::new(tl!("Discord").to_string()).icon(IconId::new("discordPill")).variant(Variant::Custom(DISCORD_PILL)).tooltip(tip).show(ui);
-            rects.push(out.response.rect);
-            out.clicked()
-        };
-        if clicked {
-            let _ = app.run("ui.discord", json!({}));
-        }
-    }
+    let mut rects = vec![super::search::show(app, ui, step >= 1)];
     let initials: String = app.session.user_initials().chars().take(2).collect();
     let out = Avatar::new(app.session.author.clone())
         .initials(initials)
