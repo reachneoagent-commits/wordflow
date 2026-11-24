@@ -67,6 +67,7 @@ The ArtCraft name, wordmark and logos remain trademarks of the ArtCraft Team and
 Full third-party credits are in [`NOTICE`](NOTICE) and [`ATTRIBUTION.md`](ATTRIBUTION.md).
 
 - **[WordCraft](https://github.com/storytold/wordcraft)** by the ArtCraft team: the original word processor engine, UI and file formats (MIT OR Apache-2.0).
+- **[craft-libs](https://github.com/storytold/craft-libs)** by the ArtCraft team: the shared UI framework and file-format libraries this app is built on, plus [egui](https://github.com/emilk/egui) (MIT OR Apache-2.0).
 - **FlowApps branding, logo and symbol:** Reach Neo (trademark of Reach Neo).
 - Bundled fonts (Source Sans 3, Source Serif 4, Inter, JetBrains Mono) — SIL Open Font License 1.1.
 - Language data from [craft-i18n](https://github.com/storytold/craft-i18n) — various open licenses.
