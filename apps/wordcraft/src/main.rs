@@ -431,7 +431,7 @@ fn main() -> eframe::Result {
         match settings_dir.as_ref().filter(|_| prefs::enabled()).map(|d| d.join("logs")) {
             Some(dir) => match logger.attach_dir(&dir) {
                 Ok(path) => {
-                    crash::install("WordCraft", env!("CARGO_PKG_VERSION"), Some(dir));
+                    crash::install("Wordflow", env!("CARGO_PKG_VERSION"), Some(dir));
                     log::info!("Wordflow {} ({}), log file {}", env!("CARGO_PKG_VERSION"), build_sha(), path.display());
                 }
                 // Standard error only by now (`attach_dir` gave up on the file).

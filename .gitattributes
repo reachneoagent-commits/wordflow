@@ -3,3 +3,10 @@
 * text=auto
 
 craft-i18n.rev text eol=lf
+
+# Wordflow (rebrand/apply.py): files we replace whole keep our version in a merge.
+# Needs `git config merge.ours.driver true` once per clone (docs/UPSTREAM.md).
+README.md merge=ours
+.github/workflows/release.yml merge=ours
+.github/workflows/windows-release.yml merge=ours
+assets/app-icon/** merge=ours
