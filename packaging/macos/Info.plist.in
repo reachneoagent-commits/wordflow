@@ -11,7 +11,7 @@
   <key>CFBundleName</key>
   <string>Wordflow</string>
   <key>CFBundleExecutable</key>
-  <string>Wordflow</string>
+  <string>WordCraft</string>
   <key>CFBundleIdentifier</key>
   <string>com.wordflow.app</string>
   <key>CFBundleInfoDictionaryVersion</key>
@@ -29,7 +29,7 @@
   <key>WordflowBuildCommit</key>
   <string>@BUILD_SHA@</string>
   <key>CFBundleIconFile</key>
-  <string>Wordflow</string>
+  <string>WordCraft</string>
   <key>LSApplicationCategoryType</key>
   <string>public.app-category.productivity</string>
   <!-- Must match MACOSX_DEPLOYMENT_TARGET in package.sh. Big Sur is the first release on

@@ -1,0 +1,612 @@
+diff --git a/ATTRIBUTION.md b/ATTRIBUTION.md
+index e9b2eeee..b568023d 100644
+--- a/ATTRIBUTION.md
++++ b/ATTRIBUTION.md
+@@ -140,8 +140,6 @@ The UI icons are SVG files in `crates/ui-egui/icons/`, one row each below. Gener
+ | `crates/ui-egui/icons/demote.svg` | WordCraft contributors | original: exported from WordCraft's own code-drawn icons (`crates/ui-egui/src/icons.rs` before the craft port), text glyphs redrawn as paths | MIT OR Apache-2.0 | UI icon |
+ | `crates/ui-egui/icons/designMode.svg` | WordCraft contributors | original: exported from WordCraft's own code-drawn icons (`crates/ui-egui/src/icons.rs` before the craft port), text glyphs redrawn as paths | MIT OR Apache-2.0 | UI icon |
+ | `crates/ui-egui/icons/dictate.svg` | WordCraft contributors | original: exported from WordCraft's own code-drawn icons (`crates/ui-egui/src/icons.rs` before the craft port), text glyphs redrawn as paths | MIT OR Apache-2.0 | UI icon |
+-| `crates/ui-egui/icons/discord.svg` | WordCraft contributors | original: exported from WordCraft's own code-drawn icons (`crates/ui-egui/src/icons.rs` before the craft port), text glyphs redrawn as paths | MIT OR Apache-2.0 | UI icon |
+-| `crates/ui-egui/icons/discordPill.svg` | WordCraft contributors | original: exported from WordCraft's own code-drawn icons (`crates/ui-egui/src/icons.rs` before the craft port), text glyphs redrawn as paths | MIT OR Apache-2.0 | UI icon |
+ | `crates/ui-egui/icons/distributeCols.svg` | WordCraft contributors | original: exported from WordCraft's own code-drawn icons (`crates/ui-egui/src/icons.rs` before the craft port), text glyphs redrawn as paths | MIT OR Apache-2.0 | UI icon |
+ | `crates/ui-egui/icons/distributeRows.svg` | WordCraft contributors | original: exported from WordCraft's own code-drawn icons (`crates/ui-egui/src/icons.rs` before the craft port), text glyphs redrawn as paths | MIT OR Apache-2.0 | UI icon |
+ | `crates/ui-egui/icons/docPrefs.svg` | WordCraft contributors | original: exported from WordCraft's own code-drawn icons (`crates/ui-egui/src/icons.rs` before the craft port), text glyphs redrawn as paths | MIT OR Apache-2.0 | UI icon |
+diff --git a/crates/ui-egui/icons/discord.svg b/crates/ui-egui/icons/discord.svg
+deleted file mode 100644
+index f660b522..00000000
+--- a/crates/ui-egui/icons/discord.svg
++++ /dev/null
+@@ -1,3 +0,0 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20">
+-  <path d="M3 6 L7 3.5 L13 3.5 L17 6 L17.5 14 L13.5 16.5 L6.5 16.5 L2.5 14 Z M6 10.5 A1.5 1.5 0 1 0 9 10.5 A1.5 1.5 0 1 0 6 10.5 Z M11 10.5 A1.5 1.5 0 1 0 14 10.5 A1.5 1.5 0 1 0 11 10.5 Z" fill="#1E6FD9" class="accent" fill-rule="evenodd"/>
+-</svg>
+diff --git a/crates/ui-egui/icons/discordPill.svg b/crates/ui-egui/icons/discordPill.svg
+deleted file mode 100644
+index e17b06c9..00000000
+--- a/crates/ui-egui/icons/discordPill.svg
++++ /dev/null
+@@ -1,3 +0,0 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20">
+-  <path d="M3 6 L7 3.5 L13 3.5 L17 6 L17.5 14 L13.5 16.5 L6.5 16.5 L2.5 14 Z M6 10.5 A1.5 1.5 0 1 0 9 10.5 A1.5 1.5 0 1 0 6 10.5 Z M11 10.5 A1.5 1.5 0 1 0 14 10.5 A1.5 1.5 0 1 0 11 10.5 Z" fill="currentColor" fill-rule="evenodd"/>
+-</svg>
+diff --git a/crates/ui-egui/src/app/commands.rs b/crates/ui-egui/src/app/commands.rs
+index 2c7b3363..e8e61439 100644
+--- a/crates/ui-egui/src/app/commands.rs
++++ b/crates/ui-egui/src/app/commands.rs
+@@ -838,10 +838,6 @@ impl WordApp {
+                         .into(),
+                 ));
+             }
+-            "ui.discord" => {
+-                self.canvas.open_url = Some("https://discord.gg/artcraft".into());
+-                json!({})
+-            }
+             "ui.caretAnimation" => {
+                 // File › Options › Advanced › Animation: `value` true or false turns the caret's
+                 // glide and fading blink on or off; no value reads it.
+@@ -1248,7 +1244,6 @@ pub(crate) fn works_without_document(id: &str) -> bool {
+             | "ui.printCancel"
+             | "ui.fileBrowser"
+             | "ui.makeDefaultApp"
+-            | "ui.discord"
+             | "ui.caretAnimation"
+             | "ui.startScreen"
+             | "ui.citations.provider"
+diff --git a/crates/ui-egui/src/backstage.rs b/crates/ui-egui/src/backstage.rs
+index bbc56ee4..02de3c76 100644
+--- a/crates/ui-egui/src/backstage.rs
++++ b/crates/ui-egui/src/backstage.rs
+@@ -160,7 +160,6 @@ fn activated<K, E>(events: Vec<CollectionEvent<K, E>>) -> Vec<K> {
+ struct MenuChoice {
+     page: RefCell<Option<&'static str>>,
+     about: Cell<bool>,
+-    discord: Cell<bool>,
+ }
+ 
+ /// The File page, shown in the shell's page slot: the side menu and the active page. Without a
+@@ -190,10 +189,9 @@ pub(crate) fn show(ui: &mut Ui, cx: &mut BodyCx<'_>, app: &mut WordApp) {
+     let page_band = (band - craft::ui::contract::pad_of(&craft::ui::runtime::env::Env::of(ui).tokens, Pad::Page)).max(0.0);
+     let choice = MenuChoice::default();
+     let current = app.ui.backstage_page.clone();
+-    let show_discord = app.ui.show_discord;
+     // The row starts at the reading start, so the side menu is at the right in a mirrored interface.
+     let _ = Row::new().fill().show(ui, |ui, _| {
+-        side_menu(ui, band, &current, has_document, show_discord, &choice);
++        side_menu(ui, band, &current, has_document, &choice);
+         let print = current == "print";
+         // Stacked rows' spacing between a page's controls, as production's (Browse… over Browse in WordCraft…).
+         // The page stands on the window's background (production's `t.ribbon`, #f9f9f9 light), not the white panel,
+@@ -214,9 +212,6 @@ pub(crate) fn show(ui: &mut Ui, cx: &mut BodyCx<'_>, app: &mut WordApp) {
+     if choice.about.get() {
+         let _ = crate::dialogs::open(app, "about", &json!({}));
+     }
+-    if choice.discord.get() {
+-        let _ = app.run("ui.discord", json!({}));
+-    }
+ }
+ 
+ /// The active page's body.
+@@ -240,9 +235,8 @@ fn page_body(ui: &mut Ui, app: &mut WordApp, page: &str) {
+ }
+ 
+ /// The side menu: Back, one button per page (the page buttons are one inspected region, from which
+-/// the keytips take their rects), then About and the community link unless the user turned the
+-/// community button off, as the title bar's pill does.
+-fn side_menu(ui: &mut Ui, band: f32, current: &str, has_document: bool, show_discord: bool, choice: &MenuChoice) {
++/// the keytips take their rects), then About.
++fn side_menu(ui: &mut Ui, band: f32, current: &str, has_document: bool, choice: &MenuChoice) {
+     // At least the side menu's width and as tall as the window, About at its foot (production's 200 pt full-height
+     // rail); its rows are the side menu place's (production's 38 pt rows of 14 pt names).
+     let _ = Stack::new()
+@@ -264,7 +258,7 @@ fn side_menu(ui: &mut Ui, band: f32, current: &str, has_document: bool, show_dis
+                 |overrides| {
+                     overrides.values.set(ControlPlace::SideMenu);
+                 },
+-                |ui| footer_links(ui, show_discord, choice),
++                |ui| footer_links(ui, choice),
+             );
+         })
+         .show(ui, |ui, _| {
+@@ -281,20 +275,8 @@ fn side_menu(ui: &mut Ui, band: f32, current: &str, has_document: bool, show_dis
+         });
+ }
+ 
+-/// The side menu's foot: the community link (unless the user turned it off) above About.
+-fn footer_links(ui: &mut Ui, show_discord: bool, choice: &MenuChoice) {
+-    if show_discord
+-        && clicked(
+-            &Button::new(label("Discord community"))
+-                .id_salt("backstage-discord")
+-                .variant(Variant::GHOST)
+-                .sizing(Sizing::FillWidth)
+-                .align(HAlign::Start)
+-                .show(ui),
+-        )
+-    {
+-        choice.discord.set(true);
+-    }
++/// The side menu's foot: About.
++fn footer_links(ui: &mut Ui, choice: &MenuChoice) {
+     if clicked(
+         &Button::new(label("About")).id_salt("backstage-about").variant(Variant::GHOST).sizing(Sizing::FillWidth).align(HAlign::Start).show(ui),
+     ) {
+diff --git a/crates/ui-egui/src/backstage/tests.rs b/crates/ui-egui/src/backstage/tests.rs
+index 202e1eff..00c3d506 100644
+--- a/crates/ui-egui/src/backstage/tests.rs
++++ b/crates/ui-egui/src/backstage/tests.rs
+@@ -741,8 +741,6 @@ fn about_stays_at_the_bottom_of_a_side_menu_that_fits() {
+     assert!(about.max.y <= 900.0, "About is inside the window: {about:?}");
+     // The menu is as tall as the window, so its footer is at the window's foot, not under Options.
+     assert!(about.max.y > 820.0, "About is at the foot of the window: {about:?}");
+-    let discord = h.get_by_label("Discord community").rect();
+-    assert!(discord.max.y <= about.min.y + 1.0, "the community link is above About: {discord:?} {about:?}");
+     assert!((about.min.x - options.min.x).abs() < 1.0 && about.width() > 80.0, "About spans the menu: {about:?}");
+     assert!((about.min.x - options.min.x).abs() < 1.0, "in the same column: {about:?} {options:?}");
+ }
+diff --git a/crates/ui-egui/src/chrome/tests.rs b/crates/ui-egui/src/chrome/tests.rs
+index f7282775..b630c657 100644
+--- a/crates/ui-egui/src/chrome/tests.rs
++++ b/crates/ui-egui/src/chrome/tests.rs
+@@ -404,11 +404,10 @@ fn the_asian_box_names_the_face_cjk_text_gets_even_for_a_font_latin_text_uses()
+     assert_eq!(a.east_asian_font_box_warning(gone, "JetBrains Mono"), want);
+ }
+ 
+-/// The whole app at `width` × 700 with the interface at `percent`, Discord shown, a selection over a document with
++/// The whole app at `width` × 700 with the interface at `percent`, a selection over a document with
+ /// Track Changes on, past the frames the fonts need.
+ fn narrow_harness(width: f32, percent: u16) -> egui_kittest::Harness<'static, WordApp> {
+     let mut a = WordApp::new(wordcraft_engine::Session::new(wordcraft_doc::Document::from_text("Several words here")), crate::Services::default());
+-    a.ui.show_discord = true;
+     a.run("ui.interfaceSize", json!({"percent": percent})).unwrap();
+     a.run("review.trackChanges", json!({"value": true})).unwrap();
+     a.run("select.all", json!({})).unwrap();
+@@ -588,197 +587,6 @@ fn the_autosave_knob_sits_right_when_on_and_mirrors_right_to_left() {
+     assert!(((ltr_off_knob.center().x - ltr_off_track.min.x) - (rtl_off_track.max.x - rtl_off_knob.center().x)).abs() <= 0.5);
+ }
+ 
+-/// #7311: the title bar's Discord community button keeps its solid accent fill and contrasting
+-/// `on_strong` icon/label in both wide (pill with label) and narrow (compact icon-only) windows,
+-/// across Light and Dark themes, and still dispatches `ui.discord` when clicked.
+-#[test]
+-fn title_bar_discord_button_keeps_accent_fill_and_icon_contrast_in_wide_and_narrow_windows() {
+-    use egui::accesskit::Role;
+-
+-    fn to_color32(rgba: craft::theme::Rgba) -> egui::Color32 {
+-        egui::Color32::from(craft::theme::Srgba::from(rgba))
+-    }
+-
+-    fn collect_shapes<'a>(shapes: &'a [egui::epaint::ClippedShape], out: &mut Vec<&'a egui::Shape>) {
+-        for clipped in shapes {
+-            fn walk<'a>(shape: &'a egui::Shape, out: &mut Vec<&'a egui::Shape>) {
+-                match shape {
+-                    egui::Shape::Vec(children) => {
+-                        for child in children {
+-                            walk(child, out);
+-                        }
+-                    }
+-                    other => out.push(other),
+-                }
+-            }
+-            walk(&clipped.shape, out);
+-        }
+-    }
+-
+-    for theme in ["light", "dark"] {
+-        for (width, expect_compact) in [(1440.0_f32, false), (520.0_f32, true)] {
+-            let mut a = new_app();
+-            a.ui.show_discord = true;
+-            a.run("ui.theme", json!({"value": theme})).unwrap();
+-            let mut h = crate::test_harness::builder().with_size(egui::vec2(width, 700.0)).build_ui_state(app_frame, a);
+-            crate::test_harness::frames(&mut h, 10);
+-
+-            let node = h.get_by_role_and_label(Role::Button, "Discord");
+-            let rect = node.rect();
+-            assert!(rect.is_positive(), "{theme} {width}: Discord button must be laid out");
+-            if expect_compact {
+-                assert!(rect.width() <= rect.height() + 4.0, "{theme} {width}: expected compact icon-only Discord button, got {rect:?}");
+-            } else {
+-                assert!(rect.width() > rect.height() + 10.0, "{theme} {width}: expected full labelled Discord pill, got {rect:?}");
+-            }
+-
+-            let env = craft::ui::runtime::env::Env::of_root(&h.ctx);
+-            let accent_strong = to_color32(env.tokens.color.accent.strong);
+-            let on_strong = to_color32(env.tokens.color.text.on_strong);
+-
+-            let mut shapes = Vec::new();
+-            collect_shapes(&h.output().shapes, &mut shapes);
+-
+-            let bg = shapes.iter().find_map(|s| match s {
+-                egui::Shape::Rect(r)
+-                    if (r.rect.min.x - rect.min.x).abs() <= 1.5
+-                        && (r.rect.max.x - rect.max.x).abs() <= 1.5
+-                        && (r.rect.min.y - rect.min.y).abs() <= 1.5
+-                        && (r.rect.max.y - rect.max.y).abs() <= 1.5
+-                        && r.fill != egui::Color32::TRANSPARENT =>
+-                {
+-                    Some(r)
+-                }
+-                _ => None,
+-            });
+-            let bg = bg.unwrap_or_else(|| panic!("{theme} {width}: expected a filled background rect for Discord button {rect:?}"));
+-            assert_eq!(bg.fill, accent_strong, "{theme} {width}: Discord button fill should be accent.strong");
+-            if !expect_compact {
+-                let min_pill_radius = (rect.height() / 2.0 - 1.5).floor().max(0.0) as u8;
+-                assert!(
+-                    bg.corner_radius.nw >= min_pill_radius,
+-                    "{theme} {width}: wide Discord button should have pill corners (>= {min_pill_radius}), got {:?}",
+-                    bg.corner_radius
+-                );
+-            }
+-
+-            let icon_tinted_on_strong = shapes.iter().any(|s| match s {
+-                egui::Shape::Mesh(mesh) => {
+-                    let bounds = mesh.calc_bounds();
+-                    rect.expand(1.5).contains_rect(bounds) && !mesh.vertices.is_empty() && mesh.vertices.iter().all(|v| v.color == on_strong)
+-                }
+-                _ => false,
+-            });
+-            assert!(
+-                icon_tinted_on_strong,
+-                "{theme} {width}: Discord icon inside {rect:?} must paint in text.on_strong ({on_strong:?}), not accent ink"
+-            );
+-
+-            if !expect_compact {
+-                let has_label = shapes.iter().any(|s| match s {
+-                    egui::Shape::Text(t) => rect.expand(1.5).contains_rect(s.visual_bounding_rect()) && t.galley.text() == "Discord",
+-                    _ => false,
+-                });
+-                assert!(has_label, "{theme} {width}: wide Discord pill must paint its \"Discord\" label");
+-            }
+-
+-            // Clicking the button dispatches `ui.discord` and opens the community URL.
+-            h.get_by_role_and_label(Role::Button, "Discord").click();
+-            let mut opened = None;
+-            for _ in 0..4 {
+-                crate::test_harness::step(&mut h);
+-                for cmd in &h.output().platform_output.commands {
+-                    if let egui::OutputCommand::OpenUrl(url) = cmd {
+-                        opened = Some(url.url.clone());
+-                    }
+-                }
+-            }
+-            assert_eq!(
+-                opened.as_deref(),
+-                Some("https://discord.gg/artcraft"),
+-                "{theme} {width}: clicking the Discord button should open the community URL"
+-            );
+-        }
+-    }
+-}
+-
+-/// #7445: the title bar's Discord community button uses the dedicated single-ink `discordPill` icon
+-/// with `on_strong` contrast over the solid accent pill, while the ribbon's Review › Help › Community
+-/// Discord button retains the branded `discord` icon with `class="accent"` ink.
+-#[test]
+-fn discord_icons_distinguish_title_bar_pill_and_ribbon_accent() {
+-    use egui::accesskit::Role;
+-
+-    fn to_color32(rgba: craft::theme::Rgba) -> egui::Color32 {
+-        egui::Color32::from(craft::theme::Srgba::from(rgba))
+-    }
+-
+-    fn collect_shapes<'a>(shapes: &'a [egui::epaint::ClippedShape], out: &mut Vec<&'a egui::Shape>) {
+-        for clipped in shapes {
+-            fn walk<'a>(shape: &'a egui::Shape, out: &mut Vec<&'a egui::Shape>) {
+-                match shape {
+-                    egui::Shape::Vec(children) => {
+-                        for child in children {
+-                            walk(child, out);
+-                        }
+-                    }
+-                    other => out.push(other),
+-                }
+-            }
+-            walk(&clipped.shape, out);
+-        }
+-    }
+-
+-    for theme in ["light", "dark"] {
+-        let mut a = new_app();
+-        a.ui.show_discord = true;
+-        a.ui.language = "en".into();
+-        a.run("ui.theme", json!({"value": theme})).unwrap();
+-        a.run("ui.tab", json!({"tab": "Help"})).unwrap();
+-
+-        let mut h = crate::test_harness::builder().with_size(egui::vec2(1440.0, 700.0)).build_ui_state(app_frame, a);
+-        crate::test_harness::frames(&mut h, 6);
+-
+-        let env = craft::ui::runtime::env::Env::of_root(&h.ctx);
+-        let on_strong = to_color32(env.tokens.color.text.on_strong);
+-        let accent_solid = to_color32(env.tokens.color.accent.solid);
+-
+-        let mut shapes = Vec::new();
+-        collect_shapes(&h.output().shapes, &mut shapes);
+-
+-        // 1. Title-bar button uses discordPill icon (single-ink text.on_strong).
+-        let title_bar_node = h.get_by_role_and_label(Role::Button, "Discord");
+-        let title_bar_rect = title_bar_node.rect();
+-        assert!(title_bar_rect.is_positive(), "{theme}: Title-bar Discord button must be laid out");
+-
+-        let title_bar_icon_on_strong = shapes.iter().any(|s| match s {
+-            egui::Shape::Mesh(mesh) => {
+-                let bounds = mesh.calc_bounds();
+-                title_bar_rect.expand(1.5).contains_rect(bounds) && !mesh.vertices.is_empty() && mesh.vertices.iter().all(|v| v.color == on_strong)
+-            }
+-            _ => false,
+-        });
+-        assert!(title_bar_icon_on_strong, "{theme}: Title-bar Discord icon inside {title_bar_rect:?} must paint in text.on_strong ({on_strong:?})");
+-
+-        // 2. Ribbon Help › Community Discord button uses discord icon with class="accent".
+-        let ribbon_node = h
+-            .query_all_by_role(Role::Button)
+-            .find(|n| n.accesskit_node().label().is_some_and(|l| l.contains("Discord")) && n.rect() != title_bar_rect)
+-            .expect("Ribbon Community Discord button");
+-        let ribbon_rect = ribbon_node.rect();
+-        assert!(ribbon_rect.is_positive(), "{theme}: Ribbon Community Discord button must be laid out");
+-
+-        let ribbon_icon_accent = shapes.iter().any(|s| match s {
+-            egui::Shape::Mesh(mesh) => {
+-                let bounds = mesh.calc_bounds();
+-                ribbon_rect.expand(1.5).contains_rect(bounds) && !mesh.vertices.is_empty() && mesh.vertices.iter().all(|v| v.color == accent_solid)
+-            }
+-            _ => false,
+-        });
+-        assert!(ribbon_icon_accent, "{theme}: Ribbon Community Discord icon inside {ribbon_rect:?} must paint in accent.solid ({accent_solid:?})");
+-    }
+-}
+-
+ /// #7319: view mode toggle buttons (Read Mode, Print Layout, Web Layout) in the status bar are grouped
+ /// with `Gap::Item` intra-group spacing, separated from Focus and Zoom controls via `Gap::Section`.
+ /// The Zoom slider has size `ControlSize::Md`, giving its thumb a 14 pt grab affordance matching sibling `IconButton`s.
+diff --git a/crates/ui-egui/src/chrome/title_bar.rs b/crates/ui-egui/src/chrome/title_bar.rs
+index 90cdfb33..4793bfd9 100644
+--- a/crates/ui-egui/src/chrome/title_bar.rs
++++ b/crates/ui-egui/src/chrome/title_bar.rs
+@@ -1,4 +1,4 @@
+-//! The title bar: AutoSave, the Quick Access Toolbar, the document title, search, community and account.
++//! The title bar: AutoSave, the Quick Access Toolbar, the document title, search and account.
+ 
+ use std::cell::RefCell;
+ 
+@@ -6,10 +6,7 @@ use craft::behavior::IconId;
+ use craft::keymap::CommandRef;
+ use craft::menu::RibbonMenuRequest;
+ use craft::review::ui::Avatar;
+-use craft::theme::variant::Tone;
+-use craft::theme::{ControlSize, CustomVariant, Emphasis, RadiusStep, Tokens, Variant, VariantLook};
+-use craft::ui::buttons::button::ButtonStyleKey;
+-use craft::ui::buttons::icon_button::IconButtonStyleKey;
++use craft::theme::ControlSize;
+ use craft::ui::buttons::{Button, IconButton};
+ use craft::ui::choice::Switch;
+ use craft::ui::contract::{Bind, BodyCx, Props as _, Show as _, ShowCollection as _, ShowContainer as _, TooltipSpec, Trigger};
+@@ -21,7 +18,7 @@ use craft::ui::primitives::IconSpec;
+ use craft::ui::runtime::env::Env;
+ use craft::ui::runtime::inspect;
+ use craft::ui::runtime::windows::{WindowAction, WindowHost};
+-use craft::ui::shell::{Title, TitleBar};
++use craft::ui::shell::{Frame, Title, TitleBar};
+ use craft::ui::style::GlyphRole;
+ use egui::Ui;
+ use serde_json::json;
+@@ -93,8 +90,19 @@ pub(crate) fn show(ui: &mut Ui, _cx: &mut BodyCx<'_>, app: &mut WordApp) {
+ /// either side of the title's place.
+ const TITLE_FIT_GAP: f32 = 16.0;
+ 
++/// The width the three macOS window lights take at the bar's start, with a gap after them.
++const LIGHTS_CLEARANCE: f32 = 78.0;
++
+ /// AutoSave and the Quick Access Toolbar, at the start of the bar; returns the rect they took.
+ fn leading(app: &mut WordApp, ui: &mut Ui) -> Option<egui::Rect> {
++    // The macOS window lights float over the bar's start edge. When the frame doesn't already reserve room for
++    // them, keep the first control clear of them (it read "utSave" under the lights).
++    if cfg!(target_os = "macos")
++        && !matches!(WindowHost::of(ui.ctx()).frame(), Frame::Inset(_))
++        && !ui.ctx().input(|i| i.viewport().fullscreen.unwrap_or(false))
++    {
++        ui.add_space(LIGHTS_CLEARANCE);
++    }
+     let switch = autosave(app, ui);
+     // Hidden (#1945): neither the buttons nor the … menu; the title centres as before.
+     let toolbar = if app.ui.quick_access_toolbar { quick_access(app, ui) } else { None };
+@@ -240,45 +248,10 @@ fn qat_menu(app: &mut WordApp, ui: &mut Ui) -> egui::Rect {
+     out.response.rect
+ }
+ 
+-/// Solid accent pill look for the full title bar Discord button (#656, #7311).
+-fn discord_pill_look(tokens: &Tokens) -> VariantLook {
+-    VariantLook::of(Emphasis::Solid, Tone::Accent, tokens).radius(RadiusStep::Pill)
+-}
+-
+-/// Solid accent look for the compact icon-only Discord button when the title bar narrows (#5886, #7311).
+-fn discord_icon_look(tokens: &Tokens) -> VariantLook {
+-    VariantLook::of(Emphasis::Solid, Tone::Accent, tokens)
+-}
+-
+-const DISCORD_PILL: CustomVariant = CustomVariant::new::<ButtonStyleKey>("wordcraft.discord-pill", discord_pill_look);
+-const DISCORD_ICON: CustomVariant = CustomVariant::new::<IconButtonStyleKey>("wordcraft.discord-icon", discord_icon_look);
+-
+-/// Search, the community button and the account, at the end of the bar; returns the rect they took. In a narrow
+-/// window they give way by `step` (#5886, as the old bar's fit): at 1 the Discord button drops its label, at 2 the
+-/// search shows its magnifier alone as well.
++/// Search and the account, at the end of the bar; returns the rect they took. In a narrow window the search gives
++/// way by `step` (#5886, as the old bar's fit): from 1 it shows its magnifier alone.
+ fn trailing(app: &mut WordApp, ui: &mut Ui, step: usize) -> Option<egui::Rect> {
+-    let mut rects = vec![super::search::show(app, ui, step >= 2)];
+-    if app.ui.show_discord {
+-        let tip = TooltipSpec::new(tl!("Join the ArtCraft community on Discord").to_string());
+-        let clicked = if step >= 1 {
+-            let out = IconButton::new(IconId::new("discordPill"))
+-                .label(tl!("Discord").to_string())
+-                .variant(Variant::Custom(DISCORD_ICON))
+-                .glyphs(GlyphRole::Tool)
+-                .tooltip(tip)
+-                .show(ui);
+-            rects.push(out.response.rect);
+-            out.response.clicked()
+-        } else {
+-            let out =
+-                Button::new(tl!("Discord").to_string()).icon(IconId::new("discordPill")).variant(Variant::Custom(DISCORD_PILL)).tooltip(tip).show(ui);
+-            rects.push(out.response.rect);
+-            out.clicked()
+-        };
+-        if clicked {
+-            let _ = app.run("ui.discord", json!({}));
+-        }
+-    }
++    let mut rects = vec![super::search::show(app, ui, step >= 1)];
+     let initials: String = app.session.user_initials().chars().take(2).collect();
+     let out = Avatar::new(app.session.author.clone())
+         .initials(initials)
+diff --git a/crates/ui-egui/src/icons.rs b/crates/ui-egui/src/icons.rs
+index 9f193a0d..9f967ead 100644
+--- a/crates/ui-egui/src/icons.rs
++++ b/crates/ui-egui/src/icons.rs
+@@ -87,8 +87,6 @@ static WORDCRAFT_ICONS_TABLE: &[(&str, &[u8])] = &[
+     ("demote", include_bytes!("../icons/demote.svg")),
+     ("designMode", include_bytes!("../icons/designMode.svg")),
+     ("dictate", include_bytes!("../icons/dictate.svg")),
+-    ("discord", include_bytes!("../icons/discord.svg")),
+-    ("discordPill", include_bytes!("../icons/discordPill.svg")),
+     ("distributeCols", include_bytes!("../icons/distributeCols.svg")),
+     ("distributeRows", include_bytes!("../icons/distributeRows.svg")),
+     ("docPrefs", include_bytes!("../icons/docPrefs.svg")),
+diff --git a/crates/ui-egui/src/keytips.rs b/crates/ui-egui/src/keytips.rs
+index 61bb6357..b3139813 100644
+--- a/crates/ui-egui/src/keytips.rs
++++ b/crates/ui-egui/src/keytips.rs
+@@ -407,7 +407,7 @@ fn controls(tab: &str) -> Vec<Control> {
+             c("Full Screen", "view.fullScreen"),
+             c("Macros", "tools.macros"),
+         ],
+-        "Help" => vec![d("Help", "about"), c("Community Discord", "ui.discord"), d("Commands", "commands")],
++        "Help" => vec![d("Help", "about"), d("Commands", "commands")],
+         "Table Design" => {
+             vec![m("Shading", "table.shading"), m("Borders", "table.borders"), c("Border Painter", "table.borderPainter")]
+         }
+diff --git a/crates/ui-egui/src/options.rs b/crates/ui-egui/src/options.rs
+index 51d6489d..cca1f0e3 100644
+--- a/crates/ui-egui/src/options.rs
++++ b/crates/ui-egui/src/options.rs
+@@ -245,7 +245,6 @@ impl<'a> OptionsModel<'a> {
+                 ("general.paperColor", Choice(id_of(&prefs.paper_color))),
+                 ("general.miniToolbar", Bool(ui.mini_toolbar)),
+                 ("general.darkPage", Bool(view.dark_mode)),
+-                ("general.showCommunity", Bool(ui.show_discord)),
+                 ("general.fontDownloadNotice", Bool(ui.font_download_notice)),
+                 ("general.startScreen", Bool(ui.start_screen)),
+                 ("general.initials", Text(String::new())),
+@@ -338,7 +337,6 @@ impl PreferencesModel for OptionsModel<'_> {
+                         b("general.miniToolbar", tl!("Show the mini toolbar when text is selected"), app.ui.mini_toolbar),
+                         b("general.darkPage", tl!("Dark page (white text on black)"), app.session.view.dark_mode)
+                             .help(tl!("Show documents with their colours inverted, like View › Switch Modes. Saving, printing and PDFs are unchanged.")),
+-                        b("general.showCommunity", tl!("Show the community button in the title bar"), app.ui.show_discord),
+                         b(
+                             "general.fontDownloadNotice",
+                             tl!("Tell me when a document's missing fonts can be downloaded"),
+@@ -637,7 +635,6 @@ impl PreferencesModel for OptionsModel<'_> {
+             },
+             ("general.paperColor", Choice(c)) => self.run("view.paperColor", json!({"value": c})),
+             ("general.miniToolbar", Bool(v)) => self.app.ui.mini_toolbar = v,
+-            ("general.showCommunity", Bool(v)) => self.app.ui.show_discord = v,
+             ("general.fontDownloadNotice", Bool(v)) => self.app.ui.font_download_notice = v,
+             ("general.darkPage", Bool(v)) => self.run("view.darkMode", json!({"value": v})),
+             ("general.startScreen", Bool(v)) => self.run("ui.startScreen", json!({"value": v})),
+diff --git a/crates/ui-egui/src/prefs.rs b/crates/ui-egui/src/prefs.rs
+index 7e528c76..b3c58954 100644
+--- a/crates/ui-egui/src/prefs.rs
++++ b/crates/ui-egui/src/prefs.rs
+@@ -93,7 +93,6 @@ pub struct Prefs {
+     /// Headings whose sub-headings the Navigation pane hides (#1997); per session, not saved.
+     #[serde(skip)]
+     pub nav_collapsed: std::collections::HashSet<wordcraft_doc::Path>,
+-    pub show_discord: bool,
+     /// User name (File › Options) for comments and tracked changes. `None` (no saved name) keeps
+     /// the default; a saved empty name stays empty (#4368).
+     #[serde(skip_serializing_if = "Option::is_none")]
+@@ -199,7 +198,6 @@ impl Default for Prefs {
+             pane_places: Default::default(),
+             pane_order: Vec::new(),
+             nav_collapsed: Default::default(),
+-            show_discord: true,
+             author: None,
+             language: i18n::AUTO.into(),
+             editing: wordcraft_engine::Prefs::default(),
+diff --git a/crates/ui-egui/src/ribbon/review.rs b/crates/ui-egui/src/ribbon/review.rs
+index 69c3262c..f7084d96 100644
+--- a/crates/ui-egui/src/ribbon/review.rs
++++ b/crates/ui-egui/src/ribbon/review.rs
+@@ -228,11 +228,6 @@ pub(super) fn help(row: &mut RibbonRow<'_>, _app: &mut WordApp) {
+             .icon(IconId::new("checkForUpdates"))
+             .arrangement(Arrangement::Stacked)
+             .show(ui);
+-        Button::command(CommandRef::new("ui.discord"))
+-            .label(tl!("Community\nDiscord").to_string())
+-            .icon(IconId::new("discord"))
+-            .arrangement(Arrangement::Stacked)
+-            .show(ui);
+     });
+     row.group(RibbonGroup::new("help.agents", tl!("Agents").to_string(), IconId::new("macros").into()), |ui| {
+         Button::command(CommandRef::with_params("ui.dialog", json!({"name": "commands"})))
+diff --git a/crates/ui-egui/src/tests/chrome.rs b/crates/ui-egui/src/tests/chrome.rs
+index cdcbba11..55768d9c 100644
+--- a/crates/ui-egui/src/tests/chrome.rs
++++ b/crates/ui-egui/src/tests/chrome.rs
+@@ -8,10 +8,6 @@ use craft::print::ui::Feedback;
+ 
+ /// The title bar's search field.
+ const SEARCH_NAME: &str = "Search commands and help";
+-/// The title bar's community button.
+-const DISCORD_TITLE_NAME: &str = "Discord";
+-/// The community link of the File page's menu.
+-const DISCORD_LINK_NAME: &str = "Discord community";
+ 
+ /// What a job of the test spooler does when it runs.
+ #[derive(Clone)]
+@@ -280,25 +276,6 @@ fn focus_esc_collapses_the_selection_first_then_leaves() {
+     assert!(!h.state().session.view.focus_mode, "the second Escape leaves Focus");
+ }
+ 
+-/// The Options toggle hides the community pill in the title bar; the backstage menu's
+-/// Discord link hides with it — one setting, everywhere the link shows.
+-///
+-/// The File page fills the window in place of the title bar (`AppShell::page`, ch.C5), so the title bar's button is
+-/// read in the editor window and the link on the File page.
+-#[test]
+-fn the_community_button_off_hides_the_backstage_discord_link_too() {
+-    for show in [true, false] {
+-        let mut a = app();
+-        a.ui.show_discord = show;
+-        let mut h = harness(a);
+-        h.run_steps(2);
+-        assert_eq!(h.query_by_label(DISCORD_TITLE_NAME).is_some(), show, "show {show}: the title bar's community button follows the setting");
+-        h.state_mut().run("ui.backstage", json!({"value": true})).unwrap();
+-        h.run_steps(2);
+-        assert_eq!(h.query_by_label(DISCORD_LINK_NAME).is_some(), show, "show {show}: the File page's link honors the same setting");
+-    }
+-}
+-
+ /// #766: started with nothing to open, the app shows File › Home (the Start screen) as Word
+ /// does. #1129: no document is open behind it, so Esc (or Back) shows an empty window, with
+ /// no page, the ribbon greyed out but for Help, and nothing to save on close. With the setting
+@@ -329,7 +306,7 @@ fn start_screen_shows_file_home_and_esc_leaves_no_document() {
+     for id in ["format.bold", "text.insert", "file.save", "file.saveAs", "file.print", "edit.paste", "insert.table", "ui.print"] {
+         assert!(!enabled(&ctx, id), "{id} is off with no document");
+     }
+-    for id in ["file.new", "file.open", "ui.backstage", "ui.tab", "ui.discord", "file.options", "ui.theme", "ui.statusCount"] {
++    for id in ["file.new", "file.open", "ui.backstage", "ui.tab", "file.options", "ui.theme", "ui.statusCount"] {
+         assert!(enabled(&ctx, id), "{id} works with no document");
+     }
+     assert!(!crate::chrome::qat_enabled(&ctx, a, "file.save"));
+diff --git a/crates/ui-egui/src/window_ui.rs b/crates/ui-egui/src/window_ui.rs
+index 9a18d38e..e5e8d619 100644
+--- a/crates/ui-egui/src/window_ui.rs
++++ b/crates/ui-egui/src/window_ui.rs
+@@ -244,7 +244,6 @@ impl WordApp {
+             scroll_speed: _,
+             touchpad_scroll_speed: _,
+             nav_pane: _,
+-            show_discord: _,
+             author: _,
+             language: _,
+             editing: _,

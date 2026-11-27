@@ -828,13 +828,13 @@ impl WordApp {
             "ui.printPage" => return Some(printing::print_page(self, p)),
             "ui.print" | "ui.printSubmit" => return Some(self.print_to_system(p)),
             "ui.printCancel" => return Some(printing::cancel(self)),
-            // File › Options › General › Make WordCraft the default… changes the user's system
+            // File › Options › General › Make Wordflow the default… changes the user's system
             // default apps (Linux) or opens system settings (Windows), so only a click on that
             // button does it ([`WordApp::make_default_app`]); scripts, the control channel and
             // MCP get an error.
             "ui.makeDefaultApp" => {
                 return Some(Err(
-                    "making WordCraft the default app needs a click in File › Options › General; scripts and agents can't change system defaults"
+                    "making Wordflow the default app needs a click in File › Options › General; scripts and agents can't change system defaults"
                         .into(),
                 ));
             }
@@ -945,22 +945,22 @@ impl WordApp {
         printing::submit(self, p)
     }
 
-    /// File › Options › General › Make WordCraft the default…: hand over to the host's
+    /// File › Options › General › Make Wordflow the default…: hand over to the host's
     /// [`Services::make_default_app`] and say in the status bar what happened. An error when the
     /// host has no hook (web, macOS). Only the button calls this: it is deliberately not a
     /// command, so nothing programmatic (control channel, MCP, macros) can change system defaults.
     #[cfg(not(target_arch = "wasm32"))]
     pub(crate) fn make_default_app(&mut self) -> Result<Value, String> {
         let Some(hook) = self.services.make_default_app.as_ref() else {
-            return Err("WordCraft can't change the default apps here; use your system's settings".into());
+            return Err("Wordflow can't change the default apps here; use your system's settings".into());
         };
         match hook() {
             Ok(DefaultApp::SettingsOpened) => {
-                self.status(tl!("In Default apps, choose WordCraft for the document types you want it to open."));
+                self.status(tl!("In Default apps, choose Wordflow for the document types you want it to open."));
                 Ok(json!({"settingsOpened": true}))
             }
             Ok(DefaultApp::MadeDefault) => {
-                self.status(tl!("WordCraft is now the default app for Word documents."));
+                self.status(tl!("Wordflow is now the default app for Word documents."));
                 Ok(json!({"default": true}))
             }
             Err(e) => {
@@ -970,8 +970,8 @@ impl WordApp {
                     _ => "",
                 };
                 let msg = match e.text() {
-                    Some(text) => i18n::fmt(tl!(text.english), &[("app", "WordCraft"), ("error", detail)]),
-                    None => i18n::fmt(tl!("Couldn't make WordCraft the default: {error}"), &[("error", detail)]),
+                    Some(text) => i18n::fmt(tl!(text.english), &[("app", "Wordflow"), ("error", detail)]),
+                    None => i18n::fmt(tl!("Couldn't make Wordflow the default: {error}"), &[("error", detail)]),
                 };
                 self.status(msg.clone());
                 Err(msg)

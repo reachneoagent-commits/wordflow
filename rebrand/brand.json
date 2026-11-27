@@ -1,0 +1,308 @@
+{
+  "name": "Wordflow",
+  "bundle": "com.wordflow.app",
+  "repo": "reachneoagent-commits/wordflow",
+  "upstream_name": "WordCraft",
+  "_comment": "Branding only: names, ids, links, installer names, icons. The Discord removal and the macOS title bar are in rebrand/patches/. Crate, binary and WORDCRAFT_* names stay; Windows installer ids stay so installed copies keep upgrading. The window name comes from os_window::name_for. Upstream's Nightly identity (name, About links) is left as it is: it exists only in their nightly builds, which Wordflow never makes. See docs/UPSTREAM.md.",
+  "edits": [
+    {
+      "file": "apps/wordcraft/src/main.rs",
+      "find": "wordcraft — the WordCraft desktop app",
+      "replace": "wordflow — the Wordflow desktop app"
+    },
+    {
+      "file": "apps/wordcraft/src/main.rs",
+      "find": "crash::install(\"WordCraft\",",
+      "replace": "crash::install(\"Wordflow\","
+    },
+    {
+      "file": "apps/wordcraft/src/main.rs",
+      "find": "println!(\"wordcraft {} ({})\"",
+      "replace": "println!(\"wordflow {} ({})\""
+    },
+    {
+      "file": "apps/wordcraft/src/main.rs",
+      "find": "log::info!(\"WordCraft {} ({}), log file",
+      "replace": "log::info!(\"Wordflow {} ({}), log file"
+    },
+    {
+      "file": "apps/wordcraft/src/main.rs",
+      "find": "\"ai.storyteller.wordcraft\"",
+      "replace": "\"com.wordflow.app\""
+    },
+    {
+      "file": "crates/mcp/src/server.rs",
+      "find": "format!\\(\\n\\s+\"\\{INSTRUCTIONS\\} Backend: \\{\\}\\. Community:\\ https://discord\\.gg/artcraft\\ ·\\ https://getartcraft\\.com/apps/wordcraft\\ ·\\ https://github\\.com/storytold/wordcraft\",\\n\\s+self\\.backend\\.describe\\(\\)\\n\\s+\\)",
+      "replace": "format!(\"{INSTRUCTIONS} Backend: {}. Source: https://github.com/reachneoagent-commits/wordflow\", self.backend.describe())",
+      "regex": true,
+      "done": "Source: https://github.com/reachneoagent-commits/wordflow"
+    },
+    {
+      "file": "crates/mcp/src/tests/oracle.rs",
+      "find": "Community: https://discord.gg/artcraft · https://getartcraft.com/apps/wordcraft · https://github.com/storytold/wordcraft",
+      "replace": "Source: https://github.com/reachneoagent-commits/wordflow"
+    },
+    {
+      "file": "crates/ui-egui/src/credits.rs",
+      "find": "\\(site,\\n/// Discord, source\\)",
+      "replace": "(site,\n/// source)",
+      "regex": true,
+      "done": "(site,\n/// source)"
+    },
+    {
+      "file": "crates/ui-egui/src/credits.rs",
+      "find": "(?s)\\.links\\(\\[\\n\\s+AboutLink::new\\(tl!\\(\\\"getartcraft\\.com/apps/wordcraft\\\"\\).*?\\n\\s+\\]\\)",
+      "replace": ".links([AboutLink::new(\n        tl!(\"Source code: github.com/reachneoagent-commits/wordflow\").to_string(),\n        \"https://github.com/reachneoagent-commits/wordflow\",\n    )])",
+      "regex": true,
+      "done": "tl!(\"Source code: github.com/reachneoagent-commits/wordflow\")"
+    },
+    {
+      "file": "packaging/macos/Info.plist.in",
+      "find": "(<key>CFBundleDisplayName</key>\\n\\s*<string>)WordCraft(</string>)",
+      "replace": "\\g<1>Wordflow\\2",
+      "regex": true,
+      "done": "<key>CFBundleDisplayName</key>\n  <string>Wordflow</string>"
+    },
+    {
+      "file": "packaging/macos/Info.plist.in",
+      "find": "(<key>CFBundleName</key>\\n\\s*<string>)WordCraft(</string>)",
+      "replace": "\\g<1>Wordflow\\2",
+      "regex": true,
+      "done": "<key>CFBundleName</key>\n  <string>Wordflow</string>"
+    },
+    {
+      "file": "packaging/macos/Info.plist.in",
+      "find": "<string>ai.storyteller.wordcraft</string>",
+      "replace": "<string>com.wordflow.app</string>"
+    },
+    {
+      "file": "packaging/macos/Info.plist.in",
+      "find": "<key>WordCraft(Version|BuildCommit)</key>",
+      "replace": "<key>Wordflow\\1</key>",
+      "regex": true,
+      "done": "<key>WordflowVersion</key>"
+    },
+    {
+      "file": "packaging/macos/Info.plist.in",
+      "find": "Copyright © the WordCraft authors.",
+      "replace": "Copyright © Reach Neo."
+    },
+    {
+      "file": "packaging/windows/wordcraft.wxs",
+      "find": "Learning Machines LLC",
+      "replace": "Reach Neo"
+    },
+    {
+      "file": "packaging/windows/wordcraft.wxs",
+      "find": "https://getartcraft.com/apps/wordcraft",
+      "replace": "https://github.com/reachneoagent-commits/wordflow"
+    },
+    {
+      "file": "packaging/windows/wordcraft.wxs",
+      "find": "https://discord.gg/artcraft",
+      "replace": "https://github.com/reachneoagent-commits/wordflow"
+    },
+    {
+      "file": "packaging/windows/wordcraft.wxs",
+      "find": "<Directory Id=\"CraftSuiteFolder\" Name=\"ArtCraft\">",
+      "replace": "<Directory Id=\"CraftSuiteFolder\" Name=\"FlowApps\">"
+    },
+    {
+      "file": "packaging/windows/wordcraft.wxs",
+      "find": "WordCraft",
+      "replace": "Wordflow"
+    },
+    {
+      "file": "crates/ui-egui/src/os_window.rs",
+      "find": "pub const APP_ID: &str = \"ai.storyteller.wordcraft\";",
+      "replace": "pub const APP_ID: &str = \"com.wordflow.app\";"
+    },
+    {
+      "file": "crates/ui-egui/src/os_window.rs",
+      "find": "LaunchIdentity::Stable => \"WordCraft\",",
+      "replace": "LaunchIdentity::Stable => \"Wordflow\","
+    },
+    {
+      "file": "crates/ui-egui/src/os_window.rs",
+      "find": "assert_eq!(name_for(LaunchIdentity::Stable), \"WordCraft\");",
+      "replace": "assert_eq!(name_for(LaunchIdentity::Stable), \"Wordflow\");"
+    },
+    {
+      "file": "crates/ui-egui/src/credits.rs",
+      "find": "tl!(\"WordCraft\").to_string(),",
+      "replace": "tl!(\"Wordflow\").to_string(),"
+    },
+    {
+      "file": "crates/ui-egui/src/credits.rs",
+      "find": "assert_eq!(name, \"WordCraft\");",
+      "replace": "assert_eq!(name, \"Wordflow\");"
+    },
+    {
+      "file": "apps/wordcraft/tests/it/control_arg.rs",
+      "find": "stdout.starts_with(\"wordcraft \")",
+      "replace": "stdout.starts_with(\"wordflow \")"
+    },
+    {
+      "file": "apps/wordcraft/tests/it/help.rs",
+      "find": "stdout.starts_with(\"wordcraft — \")",
+      "replace": "stdout.starts_with(\"wordflow — \")"
+    },
+    {
+      "file": "crates/ui-egui/src/options.rs",
+      "find": "WordCraft",
+      "replace": "Wordflow",
+      "why": "user-visible text names the app"
+    },
+    {
+      "file": "crates/ui-egui/src/language_packs.rs",
+      "find": "WordCraft",
+      "replace": "Wordflow",
+      "why": "user-visible text names the app"
+    },
+    {
+      "file": "crates/ui-egui/src/font_download.rs",
+      "find": "WordCraft",
+      "replace": "Wordflow",
+      "why": "user-visible text names the app"
+    },
+    {
+      "file": "crates/ui-egui/src/zotero.rs",
+      "find": "WordCraft",
+      "replace": "Wordflow",
+      "why": "user-visible text names the app"
+    },
+    {
+      "file": "crates/ui-egui/src/app/commands.rs",
+      "find": "WordCraft",
+      "replace": "Wordflow",
+      "why": "user-visible text names the app"
+    },
+    {
+      "file": "crates/ui-egui/src/updates_ui.rs",
+      "find": "WordCraft was started with another program's AppImage settings. Start WordCraft from",
+      "replace": "Wordflow was started with another program's AppImage settings. Start Wordflow from"
+    },
+    {
+      "file": "crates/ui-egui/src/tests.rs",
+      "find": "const LABEL: &str = \"Make WordCraft the default for Word documents…\";",
+      "replace": "const LABEL: &str = \"Make Wordflow the default for Word documents…\";"
+    },
+    {
+      "file": "crates/ui-egui/src/tests.rs",
+      "find": "h.query_by_label(\"Show the community button in the title bar\")",
+      "replace": "h.query_by_label(\"Show the mini toolbar when text is selected\")",
+      "why": "the community button option is removed by rebrand/patches/01"
+    },
+    {
+      "file": "crates/ui-egui/src/tests/chrome.rs",
+      "find": "assert_eq!(a.window_title(), \"WordCraft\",",
+      "replace": "assert_eq!(a.window_title(), \"Wordflow\","
+    },
+    {
+      "file": "packaging/windows/install-policy.json",
+      "find": "WordCraft",
+      "replace": "Wordflow",
+      "why": "must match the names in wordcraft.wxs"
+    },
+    {
+      "file": "packaging/windows/check-install-policy.ps1",
+      "find": "$directories['CraftSuiteFolder'][1] -ne 'ArtCraft') { throw 'Expected the app under the ArtCraft suite folder.' }",
+      "replace": "$directories['CraftSuiteFolder'][1] -ne 'FlowApps') { throw 'Expected the app under the FlowApps suite folder.' }"
+    },
+    {
+      "file": "packaging/windows/check-install-policy.ps1",
+      "find": "ArtCraft\\$($policy.name)",
+      "replace": "FlowApps\\$($policy.name)",
+      "why": "Wordflow installs under the FlowApps suite folder"
+    },
+    {
+      "file": "packaging/nightly-tests.py",
+      "find": "        (\"word_icons_suite\", \"nightly-icons-tests.py\"),\n",
+      "replace": "        # Wordflow: no Nightly icon suite. Our icon replaces the artwork the Nightly icons derive from.\n",
+      "done": "# Wordflow: no Nightly icon suite."
+    },
+    {
+      "file": "packaging/nightly-release-tests.py",
+      "find": "REVIEWED_STABLE_RELEASE_CALLERS = {\"release.yml\"}",
+      "replace": "REVIEWED_STABLE_RELEASE_CALLERS = set()  # Wordflow: our release.yml calls no shared release workflow",
+      "done": "REVIEWED_STABLE_RELEASE_CALLERS = set()"
+    },
+    {
+      "file": "packaging/nightly-release-tests.py",
+      "find": "\"a stable caller on a branch or tag ref\": {**tree, \"release.yml\": tree[\"release.yml\"].replace(SHARED + \"release.yml@main\", SHARED + \"release.yml@v1\")},",
+      "replace": "\"a stable caller on a branch or tag ref\": {**tree, \"release.yml\": \"jobs:\\n  x:\\n    uses: \" + SHARED + \"release.yml@v1\\n\"},",
+      "why": "Wordflow's release.yml has no shared call to retarget, so the case writes one"
+    },
+    {
+      "file": "packaging/windows/install-policy.wxi",
+      "find": "Key=\"Software\\WordCraft\"",
+      "replace": "Key=\"Software\\Wordflow\"",
+      "why": "read back the folder our wordcraft.wxs writes under Software\\Wordflow"
+    },
+    {
+      "file": "packaging/windows/install-policy.wxi",
+      "find": "\\ArtCraft\\WordCraft\\",
+      "replace": "\\FlowApps\\Wordflow\\",
+      "why": "install into the FlowApps suite folder, as wordcraft.wxs and install-policy.json say"
+    },
+    {
+      "file": "packaging/windows/install-policy.wxi",
+      "find": "the ArtCraft folder",
+      "replace": "the FlowApps folder"
+    },
+    {
+      "file": ".github/workflows/windows-arm64.yml",
+      "find": "install-relative-path: Programs/ArtCraft/WordCraft",
+      "replace": "install-relative-path: Programs/FlowApps/Wordflow"
+    }
+  ],
+  "prepend": [
+    {
+      "file": "CLAUDE.md",
+      "marker": "<!-- Wordflow (rebrand/apply.py) -->",
+      "lines": [
+        "<!-- Wordflow (rebrand/apply.py) -->",
+        "# Wordflow",
+        "",
+        "This repository is **Wordflow**, a fork of WordCraft. Read `docs/UPSTREAM.md` first. In short:",
+        "",
+        "- Never hand-edit a file that came from upstream to change branding, ids, links or icons: add the",
+        "  change to `rebrand/brand.json` (or a patch in `rebrand/patches/`) and run `rebrand/apply.py`, so",
+        "  it survives the next upstream merge.",
+        "- Wordflow's own files are `rebrand/`, `brand/`, `docs/UPSTREAM.md`, `README.md`,",
+        "  `assets/header-*.png` and `.github/workflows/release.yml` / `windows-release.yml`.",
+        "- Crate, binary and environment-variable names stay `wordcraft*` / `WORDCRAFT_*`.",
+        ""
+      ]
+    }
+  ],
+  "append": [
+    {
+      "file": "NOTICE",
+      "marker": "Wordflow is a modified version",
+      "lines": [
+        "",
+        "Wordflow",
+        "",
+        "Wordflow is a modified version of WordCraft, made by Reach Neo as part of the FlowApps suite.",
+        "It changes the name, icon, identifiers and links and removes the Discord button;",
+        "rebrand/brand.json lists every change. Wordflow is not affiliated with or endorsed by the",
+        "ArtCraft Team. The Wordflow name and mark (brand/, assets/app-icon/) are not covered by the",
+        "license above."
+      ]
+    },
+    {
+      "file": ".gitattributes",
+      "marker": "merge=ours",
+      "lines": [
+        "",
+        "# Wordflow (rebrand/apply.py): files we replace whole keep our version in a merge.",
+        "# Needs `git config merge.ours.driver true` once per clone (docs/UPSTREAM.md).",
+        "README.md merge=ours",
+        ".github/workflows/release.yml merge=ours",
+        ".github/workflows/windows-release.yml merge=ours",
+        "assets/app-icon/** merge=ours"
+      ]
+    }
+  ]
+}

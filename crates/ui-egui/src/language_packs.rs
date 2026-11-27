@@ -749,7 +749,7 @@ pub(crate) fn your_languages(app: &mut WordApp, ui: &mut Ui) {
     }
     if backend.as_ref().is_some_and(|b| !b.network_on()) {
         Text::new(tl!(
-            "Downloading is off. Clicking Add a language… or Install turns it on: WordCraft then downloads language packs and fonts from GitHub."
+            "Downloading is off. Clicking Add a language… or Install turns it on: Wordflow then downloads language packs and fonts from GitHub."
         ))
         .shade(Shade::Faint)
         .show(ui);
@@ -963,7 +963,7 @@ fn licence_texts() -> Arc<Vec<(String, String)>> {
 /// body scrolls, so a long text does not change the dialog's size.
 pub(crate) fn language_data_tab() -> AboutAppTab {
     AboutAppTab::new("languageData", tl!("Language data"), |ui: &mut Ui| {
-        Text::new(tl!("The spelling and hyphenation data WordCraft uses, and their licences.")).shade(Shade::Faint).show(ui);
+        Text::new(tl!("The spelling and hyphenation data Wordflow uses, and their licences.")).shade(Shade::Faint).show(ui);
         for (at, (title, text)) in licence_texts().iter().enumerate() {
             GroupBox::new(title.clone(), None).id_salt(("language_data", at)).show(ui, |ui, _| {
                 Text::new(text.clone()).shade(Shade::Faint).show(ui);
@@ -1183,7 +1183,7 @@ mod tests {
         assert_eq!(super::language_of("ar", "العربية"), "Arabic");
         assert_eq!(super::language_of("nn", "Norsk nynorsk"), "Norwegian (Nynorsk)");
         assert_eq!(super::language_of("es-cu", ""), "Spanish (Cuba)");
-        // A locale WordCraft has no name for keeps the pack's own name.
+        // A locale Wordflow has no name for keeps the pack's own name.
         assert_eq!(super::language_of("xq", "Xq name"), "Xq name");
     }
 

@@ -16,3 +16,7 @@ plan/
 .idea/
 *.swp
 *.swo
+/.nightly-tools
+/.nightly-input
+/craft-i18n
+__pycache__/
