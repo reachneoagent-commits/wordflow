@@ -9096,7 +9096,7 @@ dependencies = [
  "craft-ssip",
  "craft-zip",
  "encoding_rs",
- "getrandom 0.3.4",
+ "getrandom 0.4.3",
  "image",
  "js-sys",
  "libc",
