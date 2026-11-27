@@ -249,6 +249,11 @@
       "file": "packaging/windows/install-policy.wxi",
       "find": "the ArtCraft folder",
       "replace": "the FlowApps folder"
+    },
+    {
+      "file": ".github/workflows/windows-arm64.yml",
+      "find": "install-relative-path: Programs/ArtCraft/WordCraft",
+      "replace": "install-relative-path: Programs/FlowApps/Wordflow"
     }
   ],
   "prepend": [
