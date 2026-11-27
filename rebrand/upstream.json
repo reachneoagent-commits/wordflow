@@ -3,5 +3,6 @@
   "follows": "branch",
   "branch": "main",
   "commit": "62391d8aa3884f0a04da5285e5f7f244c35fa1a0",
-  "date": "2026-11-26"
+  "date": "2026-11-26",
+  "conflicts": "theirs"
 }
