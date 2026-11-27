@@ -9,7 +9,7 @@ def main() -> int:
     here = Path(__file__).resolve().parent
     suite = unittest.TestSuite()
     for name, relative in (
-        ("word_icons_suite", "nightly-icons-tests.py"),
+        # Wordflow: no Nightly icon suite. Our icon replaces the artwork the Nightly icons derive from.
         ("word_archive_suite", "nightly-archive-tests.py"),
         ("word_plist_suite", "macos/nightly_plist_tests.py"),
         ("word_release_dispatch_suite", "nightly-release-tests.py"),

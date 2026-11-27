@@ -464,7 +464,7 @@ SHARED = "storytold/craft-common-actions/.github/workflows/"
 # App workflows reviewed to call the shared stable release.yml. That callee must carry the
 # stable-only environment guard (dry runs and non-release refs bind no environment); the
 # nightly-signer settings scan checks the resolved callee before creating or advancing the branch.
-REVIEWED_STABLE_RELEASE_CALLERS = {"release.yml"}
+REVIEWED_STABLE_RELEASE_CALLERS = set()  # Wordflow: our release.yml calls no shared release workflow
 
 
 def app_workflows():
@@ -696,7 +696,7 @@ class NightlySignerBranchTrustClosure(unittest.TestCase):
             "another caller of the signer": {**tree, "extra.yml": "jobs:\n  x:\n    uses: " + SHARED + "nightly-release.yml@" + "a" * 40 + "\n"},
             "a mutable signer pin": {**tree, "nightly-sign.yml": re.sub(r"nightly-release\.yml@[0-9a-f]{40}", "nightly-release.yml@main", tree["nightly-sign.yml"])},
             "a new stable release caller": {**tree, "extra.yml": "jobs:\n  x:\n    uses: " + SHARED + "release.yml@main\n"},
-            "a stable caller on a branch or tag ref": {**tree, "release.yml": tree["release.yml"].replace(SHARED + "release.yml@main", SHARED + "release.yml@v1")},
+            "a stable caller on a branch or tag ref": {**tree, "release.yml": "jobs:\n  x:\n    uses: " + SHARED + "release.yml@v1\n"},
         }
         for label, workflows in bad.items():
             with self.subTest(case=label):

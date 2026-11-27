@@ -24,7 +24,7 @@ jobs:
         run: cargo build --release -p wordcraft
 
       - name: Extract version from tag
-        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
 
       - name: Create macOS app bundle
         run: |
@@ -93,7 +93,7 @@ jobs:
         run: |
           gh release download "${{ github.ref_name }}" -R "$GITHUB_REPOSITORY" --dir dist --pattern "*"
           cd dist
-          sha256sum * > SHA256SUMS.txt
+          sha256sum -- * > SHA256SUMS.txt
 
       - name: Upload checksums
         uses: softprops/action-gh-release@v2

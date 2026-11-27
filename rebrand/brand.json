@@ -197,6 +197,41 @@
       "file": "crates/ui-egui/src/tests/chrome.rs",
       "find": "assert_eq!(a.window_title(), \"WordCraft\",",
       "replace": "assert_eq!(a.window_title(), \"Wordflow\","
+    },
+    {
+      "file": "packaging/windows/install-policy.json",
+      "find": "WordCraft",
+      "replace": "Wordflow",
+      "why": "must match the names in wordcraft.wxs"
+    },
+    {
+      "file": "packaging/windows/check-install-policy.ps1",
+      "find": "$directories['CraftSuiteFolder'][1] -ne 'ArtCraft') { throw 'Expected the app under the ArtCraft suite folder.' }",
+      "replace": "$directories['CraftSuiteFolder'][1] -ne 'FlowApps') { throw 'Expected the app under the FlowApps suite folder.' }"
+    },
+    {
+      "file": "packaging/windows/check-install-policy.ps1",
+      "find": "ArtCraft\\$($policy.name)",
+      "replace": "FlowApps\\$($policy.name)",
+      "why": "Wordflow installs under the FlowApps suite folder"
+    },
+    {
+      "file": "packaging/nightly-tests.py",
+      "find": "        (\"word_icons_suite\", \"nightly-icons-tests.py\"),\n",
+      "replace": "        # Wordflow: no Nightly icon suite. Our icon replaces the artwork the Nightly icons derive from.\n",
+      "done": "# Wordflow: no Nightly icon suite."
+    },
+    {
+      "file": "packaging/nightly-release-tests.py",
+      "find": "REVIEWED_STABLE_RELEASE_CALLERS = {\"release.yml\"}",
+      "replace": "REVIEWED_STABLE_RELEASE_CALLERS = set()  # Wordflow: our release.yml calls no shared release workflow",
+      "done": "REVIEWED_STABLE_RELEASE_CALLERS = set()"
+    },
+    {
+      "file": "packaging/nightly-release-tests.py",
+      "find": "\"a stable caller on a branch or tag ref\": {**tree, \"release.yml\": tree[\"release.yml\"].replace(SHARED + \"release.yml@main\", SHARED + \"release.yml@v1\")},",
+      "replace": "\"a stable caller on a branch or tag ref\": {**tree, \"release.yml\": \"jobs:\\n  x:\\n    uses: \" + SHARED + \"release.yml@v1\\n\"},",
+      "why": "Wordflow's release.yml has no shared call to retarget, so the case writes one"
     }
   ],
   "prepend": [
