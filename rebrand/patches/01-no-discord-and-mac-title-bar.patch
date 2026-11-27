@@ -1,8 +1,8 @@
 diff --git a/ATTRIBUTION.md b/ATTRIBUTION.md
-index 5d446664..813a3845 100644
+index e9b2eeee..b568023d 100644
 --- a/ATTRIBUTION.md
 +++ b/ATTRIBUTION.md
-@@ -134,8 +134,6 @@ The UI icons are SVG files in `crates/ui-egui/icons/`, one row each below. Gener
+@@ -140,8 +140,6 @@ The UI icons are SVG files in `crates/ui-egui/icons/`, one row each below. Gener
  | `crates/ui-egui/icons/demote.svg` | WordCraft contributors | original: exported from WordCraft's own code-drawn icons (`crates/ui-egui/src/icons.rs` before the craft port), text glyphs redrawn as paths | MIT OR Apache-2.0 | UI icon |
  | `crates/ui-egui/icons/designMode.svg` | WordCraft contributors | original: exported from WordCraft's own code-drawn icons (`crates/ui-egui/src/icons.rs` before the craft port), text glyphs redrawn as paths | MIT OR Apache-2.0 | UI icon |
  | `crates/ui-egui/icons/dictate.svg` | WordCraft contributors | original: exported from WordCraft's own code-drawn icons (`crates/ui-egui/src/icons.rs` before the craft port), text glyphs redrawn as paths | MIT OR Apache-2.0 | UI icon |
@@ -144,10 +144,10 @@ index 202e1eff..00c3d506 100644
      assert!((about.min.x - options.min.x).abs() < 1.0, "in the same column: {about:?} {options:?}");
  }
 diff --git a/crates/ui-egui/src/chrome/tests.rs b/crates/ui-egui/src/chrome/tests.rs
-index 5847c11e..4a578d93 100644
+index f7282775..b630c657 100644
 --- a/crates/ui-egui/src/chrome/tests.rs
 +++ b/crates/ui-egui/src/chrome/tests.rs
-@@ -343,11 +343,10 @@ fn the_asian_box_names_the_face_cjk_text_gets_even_for_a_font_latin_text_uses()
+@@ -404,11 +404,10 @@ fn the_asian_box_names_the_face_cjk_text_gets_even_for_a_font_latin_text_uses()
      assert_eq!(a.east_asian_font_box_warning(gone, "JetBrains Mono"), want);
  }
  
@@ -160,8 +160,8 @@ index 5847c11e..4a578d93 100644
      a.run("ui.interfaceSize", json!({"percent": percent})).unwrap();
      a.run("review.trackChanges", json!({"value": true})).unwrap();
      a.run("select.all", json!({})).unwrap();
-@@ -437,197 +436,6 @@ fn status_bar_texts_stop_before_the_controls_in_a_narrow_window() {
-     assert!(painted_on_row_of(&wide, focus).iter().any(|(t, _)| t == "Track Changes: On"), "a wide window shows everything");
+@@ -588,197 +587,6 @@ fn the_autosave_knob_sits_right_when_on_and_mirrors_right_to_left() {
+     assert!(((ltr_off_knob.center().x - ltr_off_track.min.x) - (rtl_off_track.max.x - rtl_off_knob.center().x)).abs() <= 0.5);
  }
  
 -/// #7311: the title bar's Discord community button keeps its solid accent fill and contrasting
@@ -359,7 +359,7 @@ index 5847c11e..4a578d93 100644
  /// with `Gap::Item` intra-group spacing, separated from Focus and Zoom controls via `Gap::Section`.
  /// The Zoom slider has size `ControlSize::Md`, giving its thumb a 14 pt grab affordance matching sibling `IconButton`s.
 diff --git a/crates/ui-egui/src/chrome/title_bar.rs b/crates/ui-egui/src/chrome/title_bar.rs
-index 71082a35..dda01631 100644
+index 90cdfb33..4793bfd9 100644
 --- a/crates/ui-egui/src/chrome/title_bar.rs
 +++ b/crates/ui-egui/src/chrome/title_bar.rs
 @@ -1,4 +1,4 @@
@@ -409,7 +409,7 @@ index 71082a35..dda01631 100644
      let switch = autosave(app, ui);
      // Hidden (#1945): neither the buttons nor the … menu; the title centres as before.
      let toolbar = if app.ui.quick_access_toolbar { quick_access(app, ui) } else { None };
-@@ -235,45 +243,10 @@ fn qat_menu(app: &mut WordApp, ui: &mut Ui) -> egui::Rect {
+@@ -240,45 +248,10 @@ fn qat_menu(app: &mut WordApp, ui: &mut Ui) -> egui::Rect {
      out.response.rect
  }
  
@@ -459,7 +459,7 @@ index 71082a35..dda01631 100644
      let out = Avatar::new(app.session.author.clone())
          .initials(initials)
 diff --git a/crates/ui-egui/src/icons.rs b/crates/ui-egui/src/icons.rs
-index 27bff68a..b761baab 100644
+index 9f193a0d..9f967ead 100644
 --- a/crates/ui-egui/src/icons.rs
 +++ b/crates/ui-egui/src/icons.rs
 @@ -87,8 +87,6 @@ static WORDCRAFT_ICONS_TABLE: &[(&str, &[u8])] = &[
@@ -472,10 +472,10 @@ index 27bff68a..b761baab 100644
      ("distributeRows", include_bytes!("../icons/distributeRows.svg")),
      ("docPrefs", include_bytes!("../icons/docPrefs.svg")),
 diff --git a/crates/ui-egui/src/keytips.rs b/crates/ui-egui/src/keytips.rs
-index faa5553d..abd19103 100644
+index 61bb6357..b3139813 100644
 --- a/crates/ui-egui/src/keytips.rs
 +++ b/crates/ui-egui/src/keytips.rs
-@@ -354,7 +354,7 @@ fn controls(tab: &str) -> Vec<Control> {
+@@ -407,7 +407,7 @@ fn controls(tab: &str) -> Vec<Control> {
              c("Full Screen", "view.fullScreen"),
              c("Macros", "tools.macros"),
          ],
@@ -485,7 +485,7 @@ index faa5553d..abd19103 100644
              vec![m("Shading", "table.shading"), m("Borders", "table.borders"), c("Border Painter", "table.borderPainter")]
          }
 diff --git a/crates/ui-egui/src/options.rs b/crates/ui-egui/src/options.rs
-index 7e987e8d..162f08bc 100644
+index 51d6489d..cca1f0e3 100644
 --- a/crates/ui-egui/src/options.rs
 +++ b/crates/ui-egui/src/options.rs
 @@ -245,7 +245,6 @@ impl<'a> OptionsModel<'a> {
@@ -549,7 +549,7 @@ index 69c3262c..f7084d96 100644
      row.group(RibbonGroup::new("help.agents", tl!("Agents").to_string(), IconId::new("macros").into()), |ui| {
          Button::command(CommandRef::with_params("ui.dialog", json!({"name": "commands"})))
 diff --git a/crates/ui-egui/src/tests/chrome.rs b/crates/ui-egui/src/tests/chrome.rs
-index 10eb828d..cdae39cb 100644
+index cdcbba11..55768d9c 100644
 --- a/crates/ui-egui/src/tests/chrome.rs
 +++ b/crates/ui-egui/src/tests/chrome.rs
 @@ -8,10 +8,6 @@ use craft::print::ui::Feedback;
@@ -563,7 +563,7 @@ index 10eb828d..cdae39cb 100644
  
  /// What a job of the test spooler does when it runs.
  #[derive(Clone)]
-@@ -261,25 +257,6 @@ fn focus_esc_collapses_the_selection_first_then_leaves() {
+@@ -280,25 +276,6 @@ fn focus_esc_collapses_the_selection_first_then_leaves() {
      assert!(!h.state().session.view.focus_mode, "the second Escape leaves Focus");
  }
  
@@ -589,7 +589,7 @@ index 10eb828d..cdae39cb 100644
  /// #766: started with nothing to open, the app shows File › Home (the Start screen) as Word
  /// does. #1129: no document is open behind it, so Esc (or Back) shows an empty window, with
  /// no page, the ribbon greyed out but for Help, and nothing to save on close. With the setting
-@@ -310,7 +287,7 @@ fn start_screen_shows_file_home_and_esc_leaves_no_document() {
+@@ -329,7 +306,7 @@ fn start_screen_shows_file_home_and_esc_leaves_no_document() {
      for id in ["format.bold", "text.insert", "file.save", "file.saveAs", "file.print", "edit.paste", "insert.table", "ui.print"] {
          assert!(!enabled(&ctx, id), "{id} is off with no document");
      }
@@ -599,10 +599,10 @@ index 10eb828d..cdae39cb 100644
      }
      assert!(!crate::chrome::qat_enabled(&ctx, a, "file.save"));
 diff --git a/crates/ui-egui/src/window_ui.rs b/crates/ui-egui/src/window_ui.rs
-index be3f0e35..faa44b5c 100644
+index 9a18d38e..e5e8d619 100644
 --- a/crates/ui-egui/src/window_ui.rs
 +++ b/crates/ui-egui/src/window_ui.rs
-@@ -242,7 +242,6 @@ impl WordApp {
+@@ -244,7 +244,6 @@ impl WordApp {
              scroll_speed: _,
              touchpad_scroll_speed: _,
              nav_pane: _,

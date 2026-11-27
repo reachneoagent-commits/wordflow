@@ -89,17 +89,13 @@ cargo test --locked -p wordcraft-ui-egui -p wordcraft-mcp --no-fail-fast
 
 Run the app once and look at it before releasing: tests don't see icons or the title bar.
 
-### Known work for the next merge
+### Notes from past merges
 
-Tried on 2026-11-26 against upstream `main` (81 commits ahead): the patch and every other edit
-applied, except three places upstream changed:
-
-- `apps/wordcraft/src/main.rs`: the window title and `run_native` name now come from
-  `wordcraft_ui_egui::os_window::name_for(...)` (a new "Nightly" identity), so the name edit moves
-  to `crates/ui-egui/src/os_window.rs`.
-- `crates/ui-egui/src/credits.rs`: a second, Nightly-only About box with Discord and ArtCraft links.
-- `crates/ui-egui/src/chrome/tests.rs`: upstream edited the Discord test the patch deletes
-  (conflict; keep it deleted).
+- 2026-11-27 (81 upstream commits): the window name and app id moved to
+  `crates/ui-egui/src/os_window.rs`; `brand.json` edits them there. Upstream's Nightly identity
+  (its own name and About links) is left alone: Wordflow never builds the nightly flavour.
+  Upstream's Discord tests in `chrome/tests.rs` conflicted with the patch; they are deleted and the
+  patch refreshed.
 
 ## Releasing
 

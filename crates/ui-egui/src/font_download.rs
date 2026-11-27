@@ -5,7 +5,7 @@
 //! turns it back on); the status bar's missing-fonts menu opens it by hand.
 //!
 //! The list is `font.missing`'s ([`wordcraft_engine::cmd::font::missing_fonts`]), so agents read
-//! the same fonts and pages without the box. WordCraft only links to the page: it never
+//! the same fonts and pages without the box. Wordflow only links to the page: it never
 //! downloads or bundles the fonts.
 
 use std::cell::Cell;
@@ -14,12 +14,14 @@ use craft::behavior::IconId;
 use craft::theme::Variant;
 use craft::ui::buttons::Button;
 use craft::ui::choice::Checkbox;
-use craft::ui::contract::{Bind, Props as _, Show as _, ShowContainer as _, clicked};
+use craft::ui::contract::{Bind, Pad, Props as _, Show as _, ShowContainer as _, clicked};
 use craft::ui::dialog::{Dialog, DialogId, DialogResult, DialogStack, StackDialog, dialog_id};
-use craft::ui::display::{Badge, Icon, Shade, Text};
-use craft::ui::layout_components::Row as Line;
+use craft::ui::display::{Badge, Elide, Icon, Shade, Text};
+use craft::ui::layout::RowAlign;
+use craft::ui::layout_components::{Row as Line, Stack};
 use craft::ui::primitives::IconSpec;
-use craft::ui::sections::{DialogRole, FooterButton, GroupBox};
+use craft::ui::sections::{DialogRole, FooterButton};
+use craft::ui::style::{SurfaceKind, TypeRole};
 use egui::Ui;
 use serde::Serialize;
 
@@ -118,7 +120,7 @@ pub(crate) fn tick(app: &mut WordApp) {
         return;
     }
     remember(app, id);
-    // A new document has no file: its fonts are WordCraft's choice, not a document's from elsewhere.
+    // A new document has no file: its fonts are Wordflow's choice, not a document's from elsewhere.
     if !app.ui.font_download_notice || app.session.path.is_none() {
         return;
     }
@@ -130,7 +132,7 @@ pub(crate) fn tick(app: &mut WordApp) {
 /// What the box's clicks ask of the app, which the box cannot reach itself; [`settle`] applies them in the pass
 /// they were made in.
 enum Ask {
-    /// Open the publisher's page in the browser: WordCraft downloads nothing itself.
+    /// Open the publisher's page in the browser: Wordflow downloads nothing itself.
     Download(String),
     /// The opt-out was changed to this; kept at once, however the box is closed.
     OptOut(bool),
@@ -167,11 +169,11 @@ fn system_install_steps() -> &'static str {
     if cfg!(target_arch = "wasm32") {
         ""
     } else if cfg!(target_os = "windows") {
-        tl!("Or install it for every app: select the font files, right-click and choose Install, then restart WordCraft.")
+        tl!("Or install it for every app: select the font files, right-click and choose Install, then restart Wordflow.")
     } else if cfg!(target_os = "macos") {
-        tl!("Or install it for every app: double-click each font file and choose Install in Font Book, then restart WordCraft.")
+        tl!("Or install it for every app: double-click each font file and choose Install in Font Book, then restart Wordflow.")
     } else {
-        tl!("Or install it for every app: copy the font files to the .local/share/fonts folder in your home folder, then restart WordCraft.")
+        tl!("Or install it for every app: copy the font files to the .local/share/fonts folder in your home folder, then restart Wordflow.")
     }
 }
 
@@ -272,26 +274,33 @@ impl StackDialog for FontBox {
                 .shade(Shade::Faint)
                 .show(ui);
                 for (at, g) in groups(fonts).into_iter().enumerate() {
-                    // The names are the document's own words, not interface text.
-                    GroupBox::new(g.fonts.join(", "), None).id_salt(("download", at)).show(ui, |ui, _| {
-                        let shown_as =
-                            crate::i18n::fmt(tl!("Shown as {fonts} · {publisher}"), &[("fonts", &g.shown_as.join(", ")), ("publisher", g.publisher)]);
-                        Text::new(shown_as).shade(Shade::Faint).show(ui);
-                        if g.restricted {
-                            Text::new(tl!("Its licence limits who may use it: read the terms first.")).shade(Shade::Faint).show(ui);
-                        }
-                        Line::new().show(ui, |ui, _| {
+                    // One row per download, as before the craft port: the names, what they are shown as and the licence
+                    // note stacked at the start edge, the button at the end. The names are the document's own words.
+                    Stack::new().surface(SurfaceKind::Frame).pad(Pad::Regular).fill_width().id_salt(("download_group", at)).show(ui, |ui, _| {
+                        Line::new().fill_width().align(RowAlign::SpaceBetween).id_salt(("download", at)).show(ui, |ui, _| {
+                            Stack::new().show(ui, |ui, _| {
+                                // One line cut at the end, whole in a tooltip: one unbroken name must not push the button out.
+                                Text::new(g.fonts.join(", ")).role(TypeRole::BodyStrong).elide(Elide::End).show(ui);
+                                let shown_as = crate::i18n::fmt(
+                                    tl!("Shown as {fonts} · {publisher}"),
+                                    &[("fonts", &g.shown_as.join(", ")), ("publisher", g.publisher)],
+                                );
+                                Text::new(shown_as).shade(Shade::Faint).show(ui);
+                                if g.restricted {
+                                    Text::new(tl!("Its licence limits who may use it: read the terms first.")).shade(Shade::Faint).show(ui);
+                                }
+                            });
                             if clicked(&Button::new(tl!("Download")).variant(Variant::PRIMARY).id_salt(("download_button", at)).show(ui)) {
                                 asks.push(Ask::Download(g.url.to_string()));
                             }
                         });
                     });
                 }
-                // Whose part the licence is: WordCraft only points at the publisher's page.
+                // Whose part the licence is: Wordflow only points at the publisher's page.
                 Text::new(tl!("Fonts come with licence terms. Read the publisher's terms on the download page: following them is up to you."))
                     .shade(Shade::Faint)
                     .show(ui);
-                Text::new(tl!("Then add it to WordCraft")).show(ui);
+                Text::new(tl!("Then add it to Wordflow")).show(ui);
                 Line::new().show(ui, |ui, _| {
                     Badge::count(1).show(ui);
                     Text::new(tl!("Download the font. If it comes as a .zip file, unpack it.")).show(ui);

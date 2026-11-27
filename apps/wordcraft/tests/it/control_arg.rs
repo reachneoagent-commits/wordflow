@@ -45,5 +45,5 @@ fn a_flag_after_control_is_read_as_a_flag() {
     let out = app(&["--control", "--version"]);
     let (stdout, stderr) = (String::from_utf8_lossy(&out.stdout), String::from_utf8_lossy(&out.stderr));
     assert!(out.status.success(), "status {:?}, stderr: {stderr}", out.status);
-    assert!(stdout.starts_with("wordcraft "), "stdout: {stdout}");
+    assert!(stdout.starts_with("wordflow "), "stdout: {stdout}");
 }

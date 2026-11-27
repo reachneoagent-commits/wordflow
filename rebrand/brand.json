@@ -3,7 +3,7 @@
   "bundle": "com.wordflow.app",
   "repo": "reachneoagent-commits/wordflow",
   "upstream_name": "WordCraft",
-  "_comment": "Branding only: names, ids, links, installer names, icons. The Discord removal and the macOS title bar are in rebrand/patches/. Crate, binary and WORDCRAFT_* names stay; Windows installer ids stay so installed copies keep upgrading. See docs/UPSTREAM.md.",
+  "_comment": "Branding only: names, ids, links, installer names, icons. The Discord removal and the macOS title bar are in rebrand/patches/. Crate, binary and WORDCRAFT_* names stay; Windows installer ids stay so installed copies keep upgrading. The window name comes from os_window::name_for. Upstream's Nightly identity (name, About links) is left as it is: it exists only in their nightly builds, which Wordflow never makes. See docs/UPSTREAM.md.",
   "edits": [
     {
       "file": "apps/wordcraft/src/main.rs",
@@ -27,20 +27,8 @@
     },
     {
       "file": "apps/wordcraft/src/main.rs",
-      "find": ".with_title(\"WordCraft\")",
-      "replace": ".with_title(\"Wordflow\")"
-    },
-    {
-      "file": "apps/wordcraft/src/main.rs",
       "find": "\"ai.storyteller.wordcraft\"",
       "replace": "\"com.wordflow.app\""
-    },
-    {
-      "file": "apps/wordcraft/src/main.rs",
-      "find": "run_native\\(\\n(\\s+)\"WordCraft\",",
-      "replace": "run_native(\\n\\1\"Wordflow\",",
-      "regex": true,
-      "done": "\"Wordflow\",\n        options,"
     },
     {
       "file": "crates/mcp/src/server.rs",
@@ -123,6 +111,92 @@
       "file": "packaging/windows/wordcraft.wxs",
       "find": "WordCraft",
       "replace": "Wordflow"
+    },
+    {
+      "file": "crates/ui-egui/src/os_window.rs",
+      "find": "pub const APP_ID: &str = \"ai.storyteller.wordcraft\";",
+      "replace": "pub const APP_ID: &str = \"com.wordflow.app\";"
+    },
+    {
+      "file": "crates/ui-egui/src/os_window.rs",
+      "find": "LaunchIdentity::Stable => \"WordCraft\",",
+      "replace": "LaunchIdentity::Stable => \"Wordflow\","
+    },
+    {
+      "file": "crates/ui-egui/src/os_window.rs",
+      "find": "assert_eq!(name_for(LaunchIdentity::Stable), \"WordCraft\");",
+      "replace": "assert_eq!(name_for(LaunchIdentity::Stable), \"Wordflow\");"
+    },
+    {
+      "file": "crates/ui-egui/src/credits.rs",
+      "find": "tl!(\"WordCraft\").to_string(),",
+      "replace": "tl!(\"Wordflow\").to_string(),"
+    },
+    {
+      "file": "crates/ui-egui/src/credits.rs",
+      "find": "assert_eq!(name, \"WordCraft\");",
+      "replace": "assert_eq!(name, \"Wordflow\");"
+    },
+    {
+      "file": "apps/wordcraft/tests/it/control_arg.rs",
+      "find": "stdout.starts_with(\"wordcraft \")",
+      "replace": "stdout.starts_with(\"wordflow \")"
+    },
+    {
+      "file": "apps/wordcraft/tests/it/help.rs",
+      "find": "stdout.starts_with(\"wordcraft — \")",
+      "replace": "stdout.starts_with(\"wordflow — \")"
+    },
+    {
+      "file": "crates/ui-egui/src/options.rs",
+      "find": "WordCraft",
+      "replace": "Wordflow",
+      "why": "user-visible text names the app"
+    },
+    {
+      "file": "crates/ui-egui/src/language_packs.rs",
+      "find": "WordCraft",
+      "replace": "Wordflow",
+      "why": "user-visible text names the app"
+    },
+    {
+      "file": "crates/ui-egui/src/font_download.rs",
+      "find": "WordCraft",
+      "replace": "Wordflow",
+      "why": "user-visible text names the app"
+    },
+    {
+      "file": "crates/ui-egui/src/zotero.rs",
+      "find": "WordCraft",
+      "replace": "Wordflow",
+      "why": "user-visible text names the app"
+    },
+    {
+      "file": "crates/ui-egui/src/app/commands.rs",
+      "find": "WordCraft",
+      "replace": "Wordflow",
+      "why": "user-visible text names the app"
+    },
+    {
+      "file": "crates/ui-egui/src/updates_ui.rs",
+      "find": "WordCraft was started with another program's AppImage settings. Start WordCraft from",
+      "replace": "Wordflow was started with another program's AppImage settings. Start Wordflow from"
+    },
+    {
+      "file": "crates/ui-egui/src/tests.rs",
+      "find": "const LABEL: &str = \"Make WordCraft the default for Word documents…\";",
+      "replace": "const LABEL: &str = \"Make Wordflow the default for Word documents…\";"
+    },
+    {
+      "file": "crates/ui-egui/src/tests.rs",
+      "find": "h.query_by_label(\"Show the community button in the title bar\")",
+      "replace": "h.query_by_label(\"Show the mini toolbar when text is selected\")",
+      "why": "the community button option is removed by rebrand/patches/01"
+    },
+    {
+      "file": "crates/ui-egui/src/tests/chrome.rs",
+      "find": "assert_eq!(a.window_title(), \"WordCraft\",",
+      "replace": "assert_eq!(a.window_title(), \"Wordflow\","
     }
   ],
   "prepend": [

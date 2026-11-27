@@ -1,6 +1,6 @@
 //! File › Options (#485): a page list on the left (General, Display, Proofing, Save, Language,
 //! Accessibility, Advanced, Agents), the chosen page's settings on the right, shown through the
-//! framework's `PreferencesPage`. Only settings WordCraft carries out are shown. Every row applies
+//! framework's `PreferencesPage`. Only settings Wordflow carries out are shown. Every row applies
 //! at once through the command agents use (`file.options` and the `ui.*`/`view.*` commands), so a
 //! setting an agent changes and the same setting changed here take one path. Settings the app keeps
 //! outside the engine are written directly by [`OptionsModel::set`].
@@ -178,7 +178,7 @@ impl Strings {
         let proofing_language = if crate::ribbon::caret_no_proof(app) {
             tl!("The text at the insertion point is marked Do not check spelling or grammar.").to_string()
         } else if !crate::ribbon::caret_language_proofed(app) {
-            crate::i18n::fmt(tl!("{language}: WordCraft doesn't check spelling or grammar in this language yet."), &[("language", &lang)])
+            crate::i18n::fmt(tl!("{language}: Wordflow doesn't check spelling or grammar in this language yet."), &[("language", &lang)])
         } else {
             let unreadable = crate::ribbon::caret_unreadable_dictionary(app);
             crate::chrome::dictionary_problem(&lang, &unreadable, crate::ribbon::caret_missing_dictionary(app))
@@ -342,13 +342,13 @@ impl PreferencesModel for OptionsModel<'_> {
                             tl!("Tell me when a document's missing fonts can be downloaded"),
                             app.ui.font_download_notice,
                         ),
-                        custom("general.defaultApp", tl!("Make WordCraft the default for Word documents…")).visible(can_default),
+                        custom("general.defaultApp", tl!("Make Wordflow the default for Word documents…")).visible(can_default),
                     ],
                 ),
                 GroupSpec::new(
                     Some(tl!("Start-up")),
-                    vec![b("general.startScreen", tl!("Show the Start screen when WordCraft starts"), app.ui.start_screen).help(tl!(
-                        "On: WordCraft opens on File › Home, with a blank document, the templates and your recent documents. Off: it opens a blank document."
+                    vec![b("general.startScreen", tl!("Show the Start screen when Wordflow starts"), app.ui.start_screen).help(tl!(
+                        "On: Wordflow opens on File › Home, with a blank document, the templates and your recent documents. Off: it opens a blank document."
                     ))],
                 ),
                 GroupSpec::new(
@@ -442,7 +442,7 @@ impl PreferencesModel for OptionsModel<'_> {
             vec![
                 GroupSpec::new(Some(tl!("Save documents")), {
                     // The browser can't write to the user's files, so AutoSave can't be turned on there (#176).
-                    let row = b("save.autosave", tl!("AutoSave documents you have saved in WordCraft"), app.autosave && !browser).enabled(!browser);
+                    let row = b("save.autosave", tl!("AutoSave documents you have saved in Wordflow"), app.autosave && !browser).enabled(!browser);
                     vec![if browser { row.help(&s.autosave_reason) } else { row }]
                 }),
                 // The open document's `file.privacyOptions` (#1062): saved with it, honoured when it is saved.
@@ -575,7 +575,7 @@ impl PreferencesModel for OptionsModel<'_> {
                         tl!("Display server:"),
                         RowKind::choice(app.ui.display_server.code(), entries(DisplayServer::ALL.iter().map(|d| (d.code(), name(d))))),
                     )
-                    .help(tl!("Applies the next time WordCraft starts.")),
+                    .help(tl!("Applies the next time Wordflow starts.")),
                 ],
             ));
         }
@@ -702,40 +702,38 @@ impl PreferencesModel for OptionsModel<'_> {
         }
     }
 
-    fn custom_row(&mut self, ui: &mut Ui, key: &str) {
+    fn custom_row(&mut self, ui: &mut Ui, key: &str) -> bool {
         match key {
             "general.defaultApp" => default_app_row(self.app, ui),
-            "proofing.autoCorrect" => {
-                if Button::new(tl!("AutoCorrect Options")).show(ui).clicked() {
-                    self.run("tools.autocorrect", json!({}));
-                }
-            }
+            "proofing.autoCorrect" => self.command_button(ui, tl!("AutoCorrect Options"), "tools.autocorrect"),
             "proofing.customDictionaryFile" => self.custom_dictionary_file(ui),
             "proofing.customDictionary" => self.custom_dictionary(ui),
             "language.proofingLanguage" => {
                 Text::new(self.strings.proofing_language.clone()).role(TypeRole::Caption).shade(Shade::Faint).show(ui);
+                false
             }
             // PLAN: assumed `your_languages(app: &mut WordApp, ui: &mut Ui)` (chrome-w12)
-            "language.yourLanguages" => crate::language_packs::your_languages(self.app, ui),
-            "language.dictionaryFiles" => dictionary_files(ui),
-            "advanced.customizeKeyboard" => {
-                if Button::new(tl!("Customize…")).show(ui).clicked() {
-                    self.run("tools.customizeKeyboard", json!({}));
-                }
+            "language.yourLanguages" => {
+                crate::language_packs::your_languages(self.app, ui);
+                false
             }
-            "advanced.customizeRibbon" if Button::new(tl!("Customize…")).show(ui).clicked() => {
-                self.run("tools.customizeRibbon", json!({}));
+            "language.dictionaryFiles" => {
+                dictionary_files(ui);
+                false
             }
-            _ => {}
+            "advanced.customizeKeyboard" => self.command_button(ui, tl!("Customize…"), "tools.customizeKeyboard"),
+            "advanced.customizeRibbon" => self.command_button(ui, tl!("Customize…"), "tools.customizeRibbon"),
+            _ => false,
         }
     }
 
-    fn custom_page(&mut self, ui: &mut Ui, page: &str) {
+    fn custom_page(&mut self, ui: &mut Ui, page: &str) -> bool {
         if page == "agents" {
             Text::new(tl!("Agents")).role(TypeRole::Heading).show(ui);
             Text::new(tl!("Every command is available to scripts and AI agents: run `wordcraft-cli mcp` for an MCP server, or start the app with `--control <port>` for the JSON control channel."))
                 .show(ui);
         }
+        false
     }
 
     fn reset_page(&mut self, page: &str) {
@@ -759,21 +757,32 @@ impl OptionsModel<'_> {
     /// Enter or focus loss. The field is given the saved path and never writes it: the framework
     /// holds the draft while an edit is open and drops it when the saved path changes (an agent's
     /// `file.options`) or the page is left, so no edit open always shows the saved path.
-    fn custom_dictionary_file(&mut self, ui: &mut Ui) {
+    /// A button that runs `command` when clicked; whether it did.
+    fn command_button(&mut self, ui: &mut Ui, label: impl Into<craft::ui::runtime::env::Label>, command: &str) -> bool {
+        let clicked = Button::new(label).show(ui).clicked();
+        if clicked {
+            self.run(command, json!({}));
+        }
+        clicked
+    }
+
+    fn custom_dictionary_file(&mut self, ui: &mut Ui) -> bool {
         let saved = self.app.session.prefs.custom_dictionary.clone().unwrap_or_default();
         let out = TextField::new(tl!("Dictionary file:"), Bind::given(saved)).limit(None).show(ui);
         let committed = out.events.into_iter().find_map(|event| match event {
             EditEvent::Commit { after, .. } => Some(after),
             _ => None,
         });
+        let changed = committed.is_some();
         if let Some(path) = committed {
             self.set("proofing.customDictionaryFile", PrefValue::Text(path));
         }
+        changed
     }
 
     /// The custom dictionary: the words Add to Dictionary kept, each with a Remove button, and a
     /// field to add one.
-    fn custom_dictionary(&mut self, ui: &mut Ui) {
+    fn custom_dictionary(&mut self, ui: &mut Ui) -> bool {
         let words = wordcraft_engine::proof::user_dictionary();
         if words.is_empty() {
             Text::new(tl!("No words yet. Add to Dictionary on a misspelled word puts it here.")).role(TypeRole::Caption).shade(Shade::Faint).show(ui);
@@ -790,8 +799,10 @@ impl OptionsModel<'_> {
                 }
             })
         });
+        let mut changed = false;
         if let Some(w) = removed.take() {
             self.options(json!({"removeWords": [w]}));
+            changed = true;
         }
         // Enter or Add files the draft and clears it.
         Row::new().show(ui, |ui, cx| {
@@ -803,8 +814,10 @@ impl OptionsModel<'_> {
             if ok && (add || out.submitted) {
                 self.options(json!({"addWords": [word]}));
                 draft.clear();
+                changed = true;
             }
         });
+        changed
     }
 }
 
@@ -854,33 +867,37 @@ fn language_name(lang: wordcraft_engine::proof::ProofLang) -> &'static str {
     }
 }
 
-/// File ▸ Options ▸ General: make WordCraft the default app for Word documents (#295). Only where
+/// File ▸ Options ▸ General: make Wordflow the default app for Word documents (#295). Only where
 /// the host can (`Services::make_default_app`: Windows opens Default apps, Linux and BSD use
 /// `xdg-mime`); macOS shows how to do it in Finder, the web shows nothing.
 #[cfg(not(target_arch = "wasm32"))]
-fn default_app_row(app: &mut WordApp, ui: &mut Ui) {
+fn default_app_row(app: &mut WordApp, ui: &mut Ui) -> bool {
     if app.services.make_default_app.is_some() {
         let hint = if cfg!(target_os = "windows") {
-            tl!("Opens Settings › Default apps, where you choose WordCraft for .docx and the other document types.")
+            tl!("Opens Settings › Default apps, where you choose Wordflow for .docx and the other document types.")
         } else {
-            tl!("Opens .docx, .doc, .rtf and .odt files and Word templates with WordCraft from now on.")
+            tl!("Opens .docx, .doc, .rtf and .odt files and Word templates with Wordflow from now on.")
         };
-        let clicked = Button::new(tl!("Make WordCraft the default for Word documents…")).tooltip(hint).show(ui).clicked();
+        let clicked = Button::new(tl!("Make Wordflow the default for Word documents…")).tooltip(hint).show(ui).clicked();
         // Only a person's click changes system defaults: an automation client's pass does not.
         if clicked && !WindowHost::of(ui.ctx()).injected_pass() {
             let _ = app.make_default_app();
+            return true;
         }
     } else if cfg!(target_os = "macos") {
-        Text::new(tl!("To open Word documents with WordCraft by default: select one in Finder, choose File › Get Info, pick WordCraft under Open with, then click Change All."))
+        Text::new(tl!("To open Word documents with Wordflow by default: select one in Finder, choose File › Get Info, pick Wordflow under Open with, then click Change All."))
             .role(TypeRole::Caption)
             .shade(Shade::Faint)
             .show(ui);
     }
+    false
 }
 
 /// The web has no system default apps to change: nothing to show.
 #[cfg(target_arch = "wasm32")]
-fn default_app_row(_app: &mut WordApp, _ui: &mut Ui) {}
+fn default_app_row(_app: &mut WordApp, _ui: &mut Ui) -> bool {
+    false
+}
 
 /// The Options page.
 pub fn page(app: &mut WordApp, ui: &mut Ui) {
