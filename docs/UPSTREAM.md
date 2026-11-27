@@ -13,19 +13,21 @@ version of any conflicted file and re-apply our changes in one step.
 
 | Ours (upstream has no such file, or we replace theirs whole) | Upstream's, changed only by `rebrand/apply.py` |
 |---|---|
-| `rebrand/` (script, patches, icons, `upstream.json`) | everything under `crates/`, `apps/`, `packaging/` |
+| `rebrand/` (script, `brand.json`, patches, icons, `upstream.json`) | everything under `crates/`, `apps/`, `packaging/` |
 | `brand/` (logos, `.ai` source) | `assets/app-icon/` (file names theirs, artwork ours, from `rebrand/app-icon/`) |
 | `docs/UPSTREAM.md`, `README.md`, `assets/header-*.png` | `CLAUDE.md`, `NOTICE`, `.gitattributes`, `ATTRIBUTION.md` |
 | `.github/workflows/release.yml`, `windows-release.yml` | |
 
-The script makes three kinds of change:
+`rebrand/apply.py` is the same script in every FlowApps fork; what it changes is listed in
+`rebrand/brand.json`. It makes four kinds of change:
 
-- **Text edits** (find and replace): window title, bundle id `com.wordflow.app`, version and log
+- **Text edits** (`edits` in `brand.json`, find and replace): window title, bundle id `com.wordflow.app`, version and log
   lines, crash reports, About box and AI-agent links, Mac `Info.plist.in`, Windows installer names.
 - **Patches** in `rebrand/patches/`, for code changes too big for find and replace: no Discord
   button, link, keytip or setting anywhere, and the title bar keeps clear of the macOS window
   buttons. Applied with a three-way merge, so they still fit when upstream edits nearby lines.
 - **Icons**: `rebrand/app-icon/` copied over upstream's files of the same names.
+- **Notes** added once to `CLAUDE.md`, `NOTICE` and `.gitattributes` (`prepend` / `append`).
 
 Left alone on purpose: crate and binary names (`wordcraft*`), environment variables
 (`WORDCRAFT_*`), log-file and settings-folder names, the MCP server name, licences and credits,
@@ -70,7 +72,7 @@ python3 rebrand/apply.py --check     # prints nothing and exits 0 when everythin
 ```
 
 If the script stops with `could not find … to edit`, upstream changed that line: look at it now and
-update the pattern in `rebrand/apply.py`. If a patch leaves conflict markers, resolve them in the
+update that edit in `rebrand/brand.json`. If a patch leaves conflict markers, resolve them in the
 file, then refresh the patch so the next merge applies cleanly:
 
 ```bash

@@ -1,0 +1,177 @@
+{
+  "name": "Wordflow",
+  "bundle": "com.wordflow.app",
+  "repo": "reachneoagent-commits/wordflow",
+  "upstream_name": "WordCraft",
+  "_comment": "Branding only: names, ids, links, installer names, icons. The Discord removal and the macOS title bar are in rebrand/patches/. Crate, binary and WORDCRAFT_* names stay; Windows installer ids stay so installed copies keep upgrading. See docs/UPSTREAM.md.",
+  "edits": [
+    {
+      "file": "apps/wordcraft/src/main.rs",
+      "find": "wordcraft — the WordCraft desktop app",
+      "replace": "wordflow — the Wordflow desktop app"
+    },
+    {
+      "file": "apps/wordcraft/src/main.rs",
+      "find": "crash::install(\"WordCraft\",",
+      "replace": "crash::install(\"Wordflow\","
+    },
+    {
+      "file": "apps/wordcraft/src/main.rs",
+      "find": "println!(\"wordcraft {} ({})\"",
+      "replace": "println!(\"wordflow {} ({})\""
+    },
+    {
+      "file": "apps/wordcraft/src/main.rs",
+      "find": "log::info!(\"WordCraft {} ({}), log file",
+      "replace": "log::info!(\"Wordflow {} ({}), log file"
+    },
+    {
+      "file": "apps/wordcraft/src/main.rs",
+      "find": ".with_title(\"WordCraft\")",
+      "replace": ".with_title(\"Wordflow\")"
+    },
+    {
+      "file": "apps/wordcraft/src/main.rs",
+      "find": "\"ai.storyteller.wordcraft\"",
+      "replace": "\"com.wordflow.app\""
+    },
+    {
+      "file": "apps/wordcraft/src/main.rs",
+      "find": "run_native\\(\\n(\\s+)\"WordCraft\",",
+      "replace": "run_native(\\n\\1\"Wordflow\",",
+      "regex": true,
+      "done": "\"Wordflow\",\n        options,"
+    },
+    {
+      "file": "crates/mcp/src/server.rs",
+      "find": "format!\\(\\n\\s+\"\\{INSTRUCTIONS\\} Backend: \\{\\}\\. Community:\\ https://discord\\.gg/artcraft\\ ·\\ https://getartcraft\\.com/apps/wordcraft\\ ·\\ https://github\\.com/storytold/wordcraft\",\\n\\s+self\\.backend\\.describe\\(\\)\\n\\s+\\)",
+      "replace": "format!(\"{INSTRUCTIONS} Backend: {}. Source: https://github.com/reachneoagent-commits/wordflow\", self.backend.describe())",
+      "regex": true,
+      "done": "Source: https://github.com/reachneoagent-commits/wordflow"
+    },
+    {
+      "file": "crates/mcp/src/tests/oracle.rs",
+      "find": "Community: https://discord.gg/artcraft · https://getartcraft.com/apps/wordcraft · https://github.com/storytold/wordcraft",
+      "replace": "Source: https://github.com/reachneoagent-commits/wordflow"
+    },
+    {
+      "file": "crates/ui-egui/src/credits.rs",
+      "find": "\\(site,\\n/// Discord, source\\)",
+      "replace": "(site,\n/// source)",
+      "regex": true,
+      "done": "(site,\n/// source)"
+    },
+    {
+      "file": "crates/ui-egui/src/credits.rs",
+      "find": "(?s)\\.links\\(\\[\\n\\s+AboutLink::new\\(tl!\\(\\\"getartcraft\\.com/apps/wordcraft\\\"\\).*?\\n\\s+\\]\\)",
+      "replace": ".links([AboutLink::new(\n        tl!(\"Source code: github.com/reachneoagent-commits/wordflow\").to_string(),\n        \"https://github.com/reachneoagent-commits/wordflow\",\n    )])",
+      "regex": true,
+      "done": "tl!(\"Source code: github.com/reachneoagent-commits/wordflow\")"
+    },
+    {
+      "file": "packaging/macos/Info.plist.in",
+      "find": "(<key>CFBundleDisplayName</key>\\n\\s*<string>)WordCraft(</string>)",
+      "replace": "\\g<1>Wordflow\\2",
+      "regex": true,
+      "done": "<key>CFBundleDisplayName</key>\n  <string>Wordflow</string>"
+    },
+    {
+      "file": "packaging/macos/Info.plist.in",
+      "find": "(<key>CFBundleName</key>\\n\\s*<string>)WordCraft(</string>)",
+      "replace": "\\g<1>Wordflow\\2",
+      "regex": true,
+      "done": "<key>CFBundleName</key>\n  <string>Wordflow</string>"
+    },
+    {
+      "file": "packaging/macos/Info.plist.in",
+      "find": "<string>ai.storyteller.wordcraft</string>",
+      "replace": "<string>com.wordflow.app</string>"
+    },
+    {
+      "file": "packaging/macos/Info.plist.in",
+      "find": "<key>WordCraft(Version|BuildCommit)</key>",
+      "replace": "<key>Wordflow\\1</key>",
+      "regex": true,
+      "done": "<key>WordflowVersion</key>"
+    },
+    {
+      "file": "packaging/macos/Info.plist.in",
+      "find": "Copyright © the WordCraft authors.",
+      "replace": "Copyright © Reach Neo."
+    },
+    {
+      "file": "packaging/windows/wordcraft.wxs",
+      "find": "Learning Machines LLC",
+      "replace": "Reach Neo"
+    },
+    {
+      "file": "packaging/windows/wordcraft.wxs",
+      "find": "https://getartcraft.com/apps/wordcraft",
+      "replace": "https://github.com/reachneoagent-commits/wordflow"
+    },
+    {
+      "file": "packaging/windows/wordcraft.wxs",
+      "find": "https://discord.gg/artcraft",
+      "replace": "https://github.com/reachneoagent-commits/wordflow"
+    },
+    {
+      "file": "packaging/windows/wordcraft.wxs",
+      "find": "<Directory Id=\"CraftSuiteFolder\" Name=\"ArtCraft\">",
+      "replace": "<Directory Id=\"CraftSuiteFolder\" Name=\"FlowApps\">"
+    },
+    {
+      "file": "packaging/windows/wordcraft.wxs",
+      "find": "WordCraft",
+      "replace": "Wordflow"
+    }
+  ],
+  "prepend": [
+    {
+      "file": "CLAUDE.md",
+      "marker": "<!-- Wordflow (rebrand/apply.py) -->",
+      "lines": [
+        "<!-- Wordflow (rebrand/apply.py) -->",
+        "# Wordflow",
+        "",
+        "This repository is **Wordflow**, a fork of WordCraft. Read `docs/UPSTREAM.md` first. In short:",
+        "",
+        "- Never hand-edit a file that came from upstream to change branding, ids, links or icons: add the",
+        "  change to `rebrand/brand.json` (or a patch in `rebrand/patches/`) and run `rebrand/apply.py`, so",
+        "  it survives the next upstream merge.",
+        "- Wordflow's own files are `rebrand/`, `brand/`, `docs/UPSTREAM.md`, `README.md`,",
+        "  `assets/header-*.png` and `.github/workflows/release.yml` / `windows-release.yml`.",
+        "- Crate, binary and environment-variable names stay `wordcraft*` / `WORDCRAFT_*`.",
+        ""
+      ]
+    }
+  ],
+  "append": [
+    {
+      "file": "NOTICE",
+      "marker": "Wordflow is a modified version",
+      "lines": [
+        "",
+        "Wordflow",
+        "",
+        "Wordflow is a modified version of WordCraft, made by Reach Neo as part of the FlowApps suite.",
+        "It changes the name, icon, identifiers and links and removes the Discord button;",
+        "rebrand/brand.json lists every change. Wordflow is not affiliated with or endorsed by the",
+        "ArtCraft Team. The Wordflow name and mark (brand/, assets/app-icon/) are not covered by the",
+        "license above."
+      ]
+    },
+    {
+      "file": ".gitattributes",
+      "marker": "merge=ours",
+      "lines": [
+        "",
+        "# Wordflow (rebrand/apply.py): files we replace whole keep our version in a merge.",
+        "# Needs `git config merge.ours.driver true` once per clone (docs/UPSTREAM.md).",
+        "README.md merge=ours",
+        ".github/workflows/release.yml merge=ours",
+        ".github/workflows/windows-release.yml merge=ours",
+        "assets/app-icon/** merge=ours"
+      ]
+    }
+  ]
+}

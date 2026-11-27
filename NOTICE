@@ -193,6 +193,6 @@ Wordflow
 
 Wordflow is a modified version of WordCraft, made by Reach Neo as part of the FlowApps suite.
 It changes the name, icon, identifiers and links and removes the Discord button;
-rebrand/apply.py lists every change. Wordflow is not affiliated with or endorsed by the
+rebrand/brand.json lists every change. Wordflow is not affiliated with or endorsed by the
 ArtCraft Team. The Wordflow name and mark (brand/, assets/app-icon/) are not covered by the
 license above.
