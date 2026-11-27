@@ -232,6 +232,23 @@
       "find": "\"a stable caller on a branch or tag ref\": {**tree, \"release.yml\": tree[\"release.yml\"].replace(SHARED + \"release.yml@main\", SHARED + \"release.yml@v1\")},",
       "replace": "\"a stable caller on a branch or tag ref\": {**tree, \"release.yml\": \"jobs:\\n  x:\\n    uses: \" + SHARED + \"release.yml@v1\\n\"},",
       "why": "Wordflow's release.yml has no shared call to retarget, so the case writes one"
+    },
+    {
+      "file": "packaging/windows/install-policy.wxi",
+      "find": "Key=\"Software\\WordCraft\"",
+      "replace": "Key=\"Software\\Wordflow\"",
+      "why": "read back the folder our wordcraft.wxs writes under Software\\Wordflow"
+    },
+    {
+      "file": "packaging/windows/install-policy.wxi",
+      "find": "\\ArtCraft\\WordCraft\\",
+      "replace": "\\FlowApps\\Wordflow\\",
+      "why": "install into the FlowApps suite folder, as wordcraft.wxs and install-policy.json say"
+    },
+    {
+      "file": "packaging/windows/install-policy.wxi",
+      "find": "the ArtCraft folder",
+      "replace": "the FlowApps folder"
     }
   ],
   "prepend": [
