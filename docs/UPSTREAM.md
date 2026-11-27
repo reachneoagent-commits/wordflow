@@ -101,3 +101,19 @@ Run the app once and look at it before releasing: tests don't see icons or the t
 
 Actions → Release builds the macOS DMG and the Windows portable zip and publishes a GitHub
 release. The FlowApps launcher installs and updates Wordflow from those releases.
+
+## Automatic check and prepare
+
+`rebrand/upstream.py` (the same file in every FlowApps fork) and two workflows do the routine part:
+
+- **Upstream check** runs every Monday and on demand. It keeps one `upstream-update` issue current:
+  the new upstream commits, a trial merge, and whether the rebrand still applies. It closes the issue
+  once we're up to date.
+- **Upstream prepare** runs only by hand. It merges upstream on an `upstream-sync/<date>` branch,
+  re-applies the branding, checks it, updates `rebrand/upstream.json` and opens a pull request for
+  review. It needs the `UPSTREAM_PUSH_TOKEN` secret (see the workflow). If a conflict or the rebrand
+  needs a person, it stops without pushing anything; then merge by hand as above.
+
+`"conflicts"` in `rebrand/upstream.json` is `"theirs"`: a conflicted file takes upstream's version and the rebrand brands it again. Upstream's own workflow changes are
+never brought in automatically; the pull request lists them. Locally: `python3 rebrand/upstream.py
+status`, `report --out FILE` or `prepare --body FILE`.
