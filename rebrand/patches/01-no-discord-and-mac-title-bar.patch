@@ -1,5 +1,5 @@
 diff --git a/ATTRIBUTION.md b/ATTRIBUTION.md
-index e9b2eeee..b568023d 100644
+index ba9d73ca..5e05b918 100644
 --- a/ATTRIBUTION.md
 +++ b/ATTRIBUTION.md
 @@ -140,8 +140,6 @@ The UI icons are SVG files in `crates/ui-egui/icons/`, one row each below. Gener
@@ -11,24 +11,6 @@ index e9b2eeee..b568023d 100644
  | `crates/ui-egui/icons/distributeCols.svg` | WordCraft contributors | original: exported from WordCraft's own code-drawn icons (`crates/ui-egui/src/icons.rs` before the craft port), text glyphs redrawn as paths | MIT OR Apache-2.0 | UI icon |
  | `crates/ui-egui/icons/distributeRows.svg` | WordCraft contributors | original: exported from WordCraft's own code-drawn icons (`crates/ui-egui/src/icons.rs` before the craft port), text glyphs redrawn as paths | MIT OR Apache-2.0 | UI icon |
  | `crates/ui-egui/icons/docPrefs.svg` | WordCraft contributors | original: exported from WordCraft's own code-drawn icons (`crates/ui-egui/src/icons.rs` before the craft port), text glyphs redrawn as paths | MIT OR Apache-2.0 | UI icon |
-diff --git a/crates/ui-egui/icons/discord.svg b/crates/ui-egui/icons/discord.svg
-deleted file mode 100644
-index f660b522..00000000
---- a/crates/ui-egui/icons/discord.svg
-+++ /dev/null
-@@ -1,3 +0,0 @@
--<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20">
--  <path d="M3 6 L7 3.5 L13 3.5 L17 6 L17.5 14 L13.5 16.5 L6.5 16.5 L2.5 14 Z M6 10.5 A1.5 1.5 0 1 0 9 10.5 A1.5 1.5 0 1 0 6 10.5 Z M11 10.5 A1.5 1.5 0 1 0 14 10.5 A1.5 1.5 0 1 0 11 10.5 Z" fill="#1E6FD9" class="accent" fill-rule="evenodd"/>
--</svg>
-diff --git a/crates/ui-egui/icons/discordPill.svg b/crates/ui-egui/icons/discordPill.svg
-deleted file mode 100644
-index e17b06c9..00000000
---- a/crates/ui-egui/icons/discordPill.svg
-+++ /dev/null
-@@ -1,3 +0,0 @@
--<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20">
--  <path d="M3 6 L7 3.5 L13 3.5 L17 6 L17.5 14 L13.5 16.5 L6.5 16.5 L2.5 14 Z M6 10.5 A1.5 1.5 0 1 0 9 10.5 A1.5 1.5 0 1 0 6 10.5 Z M11 10.5 A1.5 1.5 0 1 0 14 10.5 A1.5 1.5 0 1 0 11 10.5 Z" fill="currentColor" fill-rule="evenodd"/>
--</svg>
 diff --git a/crates/ui-egui/src/app/commands.rs b/crates/ui-egui/src/app/commands.rs
 index 2c7b3363..e8e61439 100644
 --- a/crates/ui-egui/src/app/commands.rs
@@ -53,7 +35,7 @@ index 2c7b3363..e8e61439 100644
              | "ui.startScreen"
              | "ui.citations.provider"
 diff --git a/crates/ui-egui/src/backstage.rs b/crates/ui-egui/src/backstage.rs
-index bbc56ee4..02de3c76 100644
+index 4df78678..8724d7d1 100644
 --- a/crates/ui-egui/src/backstage.rs
 +++ b/crates/ui-egui/src/backstage.rs
 @@ -160,7 +160,6 @@ fn activated<K, E>(events: Vec<CollectionEvent<K, E>>) -> Vec<K> {
@@ -131,7 +113,7 @@ index bbc56ee4..02de3c76 100644
          &Button::new(label("About")).id_salt("backstage-about").variant(Variant::GHOST).sizing(Sizing::FillWidth).align(HAlign::Start).show(ui),
      ) {
 diff --git a/crates/ui-egui/src/backstage/tests.rs b/crates/ui-egui/src/backstage/tests.rs
-index 202e1eff..00c3d506 100644
+index f830a726..1ec52833 100644
 --- a/crates/ui-egui/src/backstage/tests.rs
 +++ b/crates/ui-egui/src/backstage/tests.rs
 @@ -741,8 +741,6 @@ fn about_stays_at_the_bottom_of_a_side_menu_that_fits() {
@@ -144,10 +126,10 @@ index 202e1eff..00c3d506 100644
      assert!((about.min.x - options.min.x).abs() < 1.0, "in the same column: {about:?} {options:?}");
  }
 diff --git a/crates/ui-egui/src/chrome/tests.rs b/crates/ui-egui/src/chrome/tests.rs
-index f7282775..b630c657 100644
+index b6ea2e56..1cd2a395 100644
 --- a/crates/ui-egui/src/chrome/tests.rs
 +++ b/crates/ui-egui/src/chrome/tests.rs
-@@ -404,11 +404,10 @@ fn the_asian_box_names_the_face_cjk_text_gets_even_for_a_font_latin_text_uses()
+@@ -429,11 +429,10 @@ fn the_asian_box_names_the_face_cjk_text_gets_even_for_a_font_latin_text_uses()
      assert_eq!(a.east_asian_font_box_warning(gone, "JetBrains Mono"), want);
  }
  
@@ -160,8 +142,8 @@ index f7282775..b630c657 100644
      a.run("ui.interfaceSize", json!({"percent": percent})).unwrap();
      a.run("review.trackChanges", json!({"value": true})).unwrap();
      a.run("select.all", json!({})).unwrap();
-@@ -588,197 +587,6 @@ fn the_autosave_knob_sits_right_when_on_and_mirrors_right_to_left() {
-     assert!(((ltr_off_knob.center().x - ltr_off_track.min.x) - (rtl_off_track.max.x - rtl_off_knob.center().x)).abs() <= 0.5);
+@@ -844,197 +843,6 @@ fn ribbon_and_chrome_buttons_have_responsive_hover_lighting_and_contrast() {
+     }
  }
  
 -/// #7311: the title bar's Discord community button keeps its solid accent fill and contrasting
@@ -459,10 +441,10 @@ index 90cdfb33..4793bfd9 100644
      let out = Avatar::new(app.session.author.clone())
          .initials(initials)
 diff --git a/crates/ui-egui/src/icons.rs b/crates/ui-egui/src/icons.rs
-index 9f193a0d..9f967ead 100644
+index f9d38127..bbe05108 100644
 --- a/crates/ui-egui/src/icons.rs
 +++ b/crates/ui-egui/src/icons.rs
-@@ -87,8 +87,6 @@ static WORDCRAFT_ICONS_TABLE: &[(&str, &[u8])] = &[
+@@ -89,8 +89,6 @@ static WORDCRAFT_ICONS_TABLE: &[(&str, &[u8])] = &[
      ("demote", include_bytes!("../icons/demote.svg")),
      ("designMode", include_bytes!("../icons/designMode.svg")),
      ("dictate", include_bytes!("../icons/dictate.svg")),
@@ -472,10 +454,10 @@ index 9f193a0d..9f967ead 100644
      ("distributeRows", include_bytes!("../icons/distributeRows.svg")),
      ("docPrefs", include_bytes!("../icons/docPrefs.svg")),
 diff --git a/crates/ui-egui/src/keytips.rs b/crates/ui-egui/src/keytips.rs
-index 61bb6357..b3139813 100644
+index 7e49c85e..d624e02b 100644
 --- a/crates/ui-egui/src/keytips.rs
 +++ b/crates/ui-egui/src/keytips.rs
-@@ -407,7 +407,7 @@ fn controls(tab: &str) -> Vec<Control> {
+@@ -425,7 +425,7 @@ fn controls(tab: &str) -> Vec<Control> {
              c("Full Screen", "view.fullScreen"),
              c("Macros", "tools.macros"),
          ],
@@ -533,11 +515,11 @@ index 7e528c76..b3c58954 100644
              language: i18n::AUTO.into(),
              editing: wordcraft_engine::Prefs::default(),
 diff --git a/crates/ui-egui/src/ribbon/review.rs b/crates/ui-egui/src/ribbon/review.rs
-index 69c3262c..f7084d96 100644
+index 9e1b7496..f08cb92e 100644
 --- a/crates/ui-egui/src/ribbon/review.rs
 +++ b/crates/ui-egui/src/ribbon/review.rs
 @@ -228,11 +228,6 @@ pub(super) fn help(row: &mut RibbonRow<'_>, _app: &mut WordApp) {
-             .icon(IconId::new("checkForUpdates"))
+             .icon(IconId::new("update"))
              .arrangement(Arrangement::Stacked)
              .show(ui);
 -        Button::command(CommandRef::new("ui.discord"))
@@ -548,8 +530,20 @@ index 69c3262c..f7084d96 100644
      });
      row.group(RibbonGroup::new("help.agents", tl!("Agents").to_string(), IconId::new("macros").into()), |ui| {
          Button::command(CommandRef::with_params("ui.dialog", json!({"name": "commands"})))
+diff --git a/crates/ui-egui/src/tests.rs b/crates/ui-egui/src/tests.rs
+index d3c63757..f1053b04 100644
+--- a/crates/ui-egui/src/tests.rs
++++ b/crates/ui-egui/src/tests.rs
+@@ -2023,7 +2023,6 @@ fn title_and_account_buttons_work() {
+         (Role::Button, "Undo History"),
+         (Role::Button, "Customize Quick Access Toolbar"),
+         (Role::Button, "Document1 \u{2014} Not saved"),
+-        (Role::Button, "Discord"),
+         (Role::Button, "WordCraft User"),
+     ] {
+         assert!(h.query_by_role_and_label(role, label).is_some(), "title bar missing {role:?} {label:?}");
 diff --git a/crates/ui-egui/src/tests/chrome.rs b/crates/ui-egui/src/tests/chrome.rs
-index cdcbba11..55768d9c 100644
+index ff32dd2b..1b84d232 100644
 --- a/crates/ui-egui/src/tests/chrome.rs
 +++ b/crates/ui-egui/src/tests/chrome.rs
 @@ -8,10 +8,6 @@ use craft::print::ui::Feedback;
@@ -599,10 +593,10 @@ index cdcbba11..55768d9c 100644
      }
      assert!(!crate::chrome::qat_enabled(&ctx, a, "file.save"));
 diff --git a/crates/ui-egui/src/window_ui.rs b/crates/ui-egui/src/window_ui.rs
-index 9a18d38e..e5e8d619 100644
+index d9788f9b..d4cf8568 100644
 --- a/crates/ui-egui/src/window_ui.rs
 +++ b/crates/ui-egui/src/window_ui.rs
-@@ -244,7 +244,6 @@ impl WordApp {
+@@ -247,7 +247,6 @@ impl WordApp {
              scroll_speed: _,
              touchpad_scroll_speed: _,
              nav_pane: _,
