@@ -254,6 +254,16 @@
       "file": ".github/workflows/windows-arm64.yml",
       "find": "install-relative-path: Programs/ArtCraft/WordCraft",
       "replace": "install-relative-path: Programs/FlowApps/Wordflow"
+    },
+    {
+      "file": "apps/wordcraft/tests/it/appimage_env.rs",
+      "find": "stdout.starts_with(\"wordcraft \")",
+      "replace": "stdout.starts_with(\"wordflow \")"
+    },
+    {
+      "file": "apps/wordcraft/src/main.rs",
+      "find": "for label in [\"WordCraft\", \"Contributors\", \"Models\", \"Language data\"]",
+      "replace": "for label in [\"Wordflow\", \"Contributors\", \"Models\", \"Language data\"]"
     }
   ],
   "prepend": [
@@ -302,6 +312,32 @@
         ".github/workflows/release.yml merge=ours",
         ".github/workflows/windows-release.yml merge=ours",
         "assets/app-icon/** merge=ours"
+      ]
+    },
+    {
+      "file": "ATTRIBUTION.md",
+      "marker": "## Wordflow (FlowApps) brand files",
+      "lines": [
+        "",
+        "## Wordflow (FlowApps) brand files",
+        "",
+        "These files are the Wordflow and FlowApps name and mark, added by the Wordflow fork (`rebrand/`). They are trademarks of Reach Neo, not open source, and not covered by the licence of this repository (see `NOTICE`).",
+        "",
+        "| Asset | Author | Source | Licence | Notes |",
+        "|---|---|---|---|---|",
+        "| `assets/header-dark.png` | Reach Neo | FlowApps brand kit | Wordflow brand, not open source (see `NOTICE`) | README header image |",
+        "| `assets/header-light.png` | Reach Neo | FlowApps brand kit | Wordflow brand, not open source (see `NOTICE`) | README header image |",
+        "| `brand/brand-color.png` | Reach Neo | FlowApps brand kit | Wordflow brand, not open source (see `NOTICE`) | Wordflow brand kit |",
+        "| `brand/logoblk.svg` | Reach Neo | FlowApps brand kit | Wordflow brand, not open source (see `NOTICE`) | Wordflow brand kit |",
+        "| `brand/logocol1.svg` | Reach Neo | FlowApps brand kit | Wordflow brand, not open source (see `NOTICE`) | Wordflow brand kit |",
+        "| `brand/logocol2.svg` | Reach Neo | FlowApps brand kit | Wordflow brand, not open source (see `NOTICE`) | Wordflow brand kit |",
+        "| `brand/logowht.svg` | Reach Neo | FlowApps brand kit | Wordflow brand, not open source (see `NOTICE`) | Wordflow brand kit |",
+        "| `brand/wordflow-brand.ai` | Reach Neo | FlowApps brand kit | Wordflow brand, not open source (see `NOTICE`) | Wordflow brand kit |",
+        "| `rebrand/app-icon/wordcraft-1024.png` | Reach Neo | FlowApps brand kit | Wordflow brand, not open source (see `NOTICE`) | Wordflow app icon; `rebrand/apply.py` copies it over the upstream icon in `assets/app-icon/` |",
+        "| `rebrand/app-icon/wordcraft-macos-512.png` | Reach Neo | FlowApps brand kit | Wordflow brand, not open source (see `NOTICE`) | Wordflow app icon; `rebrand/apply.py` copies it over the upstream icon in `assets/app-icon/` |",
+        "| `rebrand/app-icon/wordcraft.icns` | Reach Neo | FlowApps brand kit | Wordflow brand, not open source (see `NOTICE`) | Wordflow app icon; `rebrand/apply.py` copies it over the upstream icon in `assets/app-icon/` |",
+        "| `rebrand/app-icon/wordcraft.ico` | Reach Neo | FlowApps brand kit | Wordflow brand, not open source (see `NOTICE`) | Wordflow app icon; `rebrand/apply.py` copies it over the upstream icon in `assets/app-icon/` |",
+        "| `rebrand/app-icon/hicolor/256x256/apps/ai.storyteller.wordcraft.png` | Reach Neo | FlowApps brand kit | Wordflow brand, not open source (see `NOTICE`) | Wordflow app icon; `rebrand/apply.py` copies it over the upstream icon in `assets/app-icon/` |"
       ]
     }
   ]
