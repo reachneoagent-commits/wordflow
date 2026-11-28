@@ -254,6 +254,11 @@
       "file": ".github/workflows/windows-arm64.yml",
       "find": "install-relative-path: Programs/ArtCraft/WordCraft",
       "replace": "install-relative-path: Programs/FlowApps/Wordflow"
+    },
+    {
+      "file": "apps/wordcraft/tests/it/appimage_env.rs",
+      "find": "stdout.starts_with(\"wordcraft \")",
+      "replace": "stdout.starts_with(\"wordflow \")"
     }
   ],
   "prepend": [
