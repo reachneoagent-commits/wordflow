@@ -1178,7 +1178,7 @@ mod smoke {
         run.settle();
         assert!(run.app.app.dialog_host_mut().shows_modal());
         let tree = run.frames.tree();
-        for label in ["WordCraft", "Contributors", "Models", "Language data"] {
+        for label in ["Wordflow", "Contributors", "Models", "Language data"] {
             assert!(tree.keys().into_iter().any(|key| craft::ui::testing::access::name(&tree, key) == Some(label)), "About exposes {label}");
         }
         run.step(vec![egui::Event::Key {

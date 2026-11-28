@@ -259,6 +259,11 @@
       "file": "apps/wordcraft/tests/it/appimage_env.rs",
       "find": "stdout.starts_with(\"wordcraft \")",
       "replace": "stdout.starts_with(\"wordflow \")"
+    },
+    {
+      "file": "apps/wordcraft/src/main.rs",
+      "find": "for label in [\"WordCraft\", \"Contributors\", \"Models\", \"Language data\"]",
+      "replace": "for label in [\"Wordflow\", \"Contributors\", \"Models\", \"Language data\"]"
     }
   ],
   "prepend": [
